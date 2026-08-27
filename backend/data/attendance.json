@@ -1,0 +1,42 @@
+[
+  {
+    "id": "att_1787746549827",
+    "memberId": "M-1003",
+    "memberName": "Erkingaliy Nagashibaev",
+    "phone": "+998931222945",
+    "lockerNumber": "M-17",
+    "checkInTime": "2026-08-26T12:15:49.827Z",
+    "status": "Chiqib ketdi (Avto 00:00)",
+    "checkOutTime": "2026-08-27T04:40:41.386Z"
+  },
+  {
+    "id": "att_1787746490126",
+    "memberId": "M-1003",
+    "memberName": "Erkingaliy Nagashibaev",
+    "phone": "+998931222945",
+    "lockerNumber": "m-2",
+    "checkInTime": "2026-08-26T12:14:50.126Z",
+    "status": "Chiqib ketdi",
+    "checkOutTime": "2026-08-26T12:15:29.032Z"
+  },
+  {
+    "id": "att_1787743533274",
+    "memberId": "M-1001",
+    "memberName": "Islambek Urazbaev",
+    "phone": "+998943513232",
+    "lockerNumber": "M-1",
+    "checkInTime": "2026-08-26T11:25:33.274Z",
+    "status": "Chiqib ketdi (Avto 00:00)",
+    "checkOutTime": "2026-08-27T04:40:41.386Z"
+  },
+  {
+    "id": "att_1787658136730",
+    "memberId": "M-1001",
+    "memberName": "Islambek Urazbaev",
+    "phone": "+998943513232",
+    "lockerNumber": "M-1",
+    "checkInTime": "2026-08-25T11:42:16.730Z",
+    "status": "Chiqib ketdi",
+    "checkOutTime": "2026-08-26T11:16:38.328Z"
+  }
+]

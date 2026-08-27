@@ -1,0 +1,256 @@
+{
+  "male": [
+    {
+      "number": "M-1",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-2",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-3",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-4",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-5",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-6",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-7",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-8",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-9",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-10",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-11",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-12",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-13",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-14",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-15",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-16",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-17",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-18",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-19",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-20",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-21",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-22",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-23",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-24",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-25",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-26",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-27",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-28",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-29",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "M-30",
+      "status": "Free",
+      "assignedTo": null
+    }
+  ],
+  "female": [
+    {
+      "number": "F-1",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-2",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-3",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-4",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-5",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-6",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-7",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-8",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-9",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-10",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-11",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-12",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-13",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-14",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-15",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-16",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-17",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-18",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-19",
+      "status": "Free",
+      "assignedTo": null
+    },
+    {
+      "number": "F-20",
+      "status": "Free",
+      "assignedTo": null
+    }
+  ]
+}

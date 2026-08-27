@@ -1,0 +1,18 @@
+[
+  {
+    "id": "sub_1787655824024",
+    "name": "Bir ayliq STANDART",
+    "durationDays": 30,
+    "price": 200000,
+    "visitsCount": 15,
+    "description": ""
+  },
+  {
+    "id": "sub_1787657605410",
+    "name": "Bir ayliq + trenrer",
+    "durationDays": 30,
+    "price": 400000,
+    "visitsCount": 15,
+    "description": "Trenrer 50% aladi"
+  }
+]

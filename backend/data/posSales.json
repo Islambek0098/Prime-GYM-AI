@@ -1,0 +1,135 @@
+[
+  {
+    "id": "sale_1787745632454",
+    "memberId": "M-1001",
+    "memberName": "Islambek Urazbaev",
+    "items": [
+      {
+        "id": "prod_1787655900395",
+        "name": "Suw  bez gaz  1.5 L",
+        "category": "Ichimlik",
+        "price": 6000,
+        "stock": 10,
+        "unit": "dona",
+        "qty": 1
+      }
+    ],
+    "totalAmount": 6000,
+    "paymentMethod": "Naqd",
+    "date": "2026-08-26T12:00:32.454Z"
+  },
+  {
+    "id": "sale_1787743029748",
+    "memberId": "M-1002",
+    "memberName": "Begis Otarbaev",
+    "items": [
+      {
+        "id": "prod_1787655900395",
+        "name": "Suw  bez gaz  1.5 L",
+        "category": "Ichimlik",
+        "price": 6000,
+        "stock": 11,
+        "unit": "dona",
+        "qty": 1
+      }
+    ],
+    "totalAmount": 6000,
+    "paymentMethod": "Naqd",
+    "date": "2026-08-26T11:17:09.748Z"
+  },
+  {
+    "id": "sale_1787663822403",
+    "memberId": null,
+    "memberName": "Oddiy Xaridor",
+    "items": [
+      {
+        "id": "prod_1787658172860",
+        "name": "Suw bez gaz  1.0 L",
+        "category": "Ichimlik",
+        "price": 4000,
+        "stock": 20,
+        "unit": "dona",
+        "qty": 14
+      }
+    ],
+    "totalAmount": 56000,
+    "paymentMethod": "Naqd",
+    "date": "2026-08-25T13:17:02.403Z"
+  },
+  {
+    "id": "sale_1787663802650",
+    "memberId": null,
+    "memberName": "Oddiy Xaridor",
+    "items": [
+      {
+        "id": "prod_1787655900395",
+        "name": "Suw  bez gaz  1.5 L",
+        "category": "Ichimlik",
+        "price": 6000,
+        "stock": 24,
+        "unit": "dona",
+        "qty": 13
+      }
+    ],
+    "totalAmount": 78000,
+    "paymentMethod": "Naqd",
+    "date": "2026-08-25T13:16:42.650Z"
+  },
+  {
+    "id": "sale_1787661730241",
+    "memberId": "M-1002",
+    "memberName": "Begis Otarbaev",
+    "items": [
+      {
+        "id": "prod_1787655900395",
+        "name": "Suw  bez gaz  1.5 L",
+        "category": "Ichimlik",
+        "price": 6000,
+        "stock": 26,
+        "unit": "dona",
+        "qty": 2
+      }
+    ],
+    "totalAmount": 12000,
+    "paymentMethod": "Karta / Click",
+    "date": "2026-08-25T12:42:10.241Z"
+  },
+  {
+    "id": "sale_1787658206950",
+    "memberId": "M-1001",
+    "memberName": "Islambek Urazbaev",
+    "items": [
+      {
+        "id": "prod_1787658172860",
+        "name": "Suw bez gaz  1.0 L",
+        "category": "Ichimlik",
+        "price": 4000,
+        "stock": 25,
+        "unit": "dona",
+        "qty": 5
+      }
+    ],
+    "totalAmount": 20000,
+    "paymentMethod": "Naqd",
+    "date": "2026-08-25T11:43:26.950Z"
+  },
+  {
+    "id": "sale_1787658180343",
+    "memberId": "M-1002",
+    "memberName": "Begis Otarbaev",
+    "items": [
+      {
+        "id": "prod_1787655900395",
+        "name": "Suw  bez gaz  1.5 L",
+        "category": "Ichimlik",
+        "price": 6000,
+        "stock": 29,
+        "unit": "dona",
+        "qty": 3
+      }
+    ],
+    "totalAmount": 18000,
+    "paymentMethod": "Naqd",
+    "date": "2026-08-25T11:43:00.343Z"
+  }
+]

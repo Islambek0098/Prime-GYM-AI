@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Plus, ShoppingCart, Trash2, CheckCircle2, Search, Package, AlertCircle, DollarSign, CreditCard, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { API_BASE_URL } from '../config';
 
 export default function PosBar({ posData, members = [], attendance = [], onRefresh, showToast }) {
   const products = posData.products || [];
@@ -103,7 +104,7 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
     const selectedMember = members.find(m => m.id === selectedMemberId);
 
     try {
-      const res = await fetch('http://localhost:5000/api/pos/sell', {
+      const res = await fetch(`${API_BASE_URL}/api/pos/sell`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,7 +139,7 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
     if (!window.confirm(`"${productName}" mahsulotini o'chirmoqchimisiz?`)) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/pos/products/${productId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/pos/products/${productId}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -173,7 +174,7 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
     if (!validateProductForm()) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/pos/products', {
+      const res = await fetch(`${API_BASE_URL}/api/pos/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProd)

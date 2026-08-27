@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, UserCheck, Key, AlertCircle, CheckCircle2, Search, Send, Dumbbell } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { API_BASE_URL } from '../config';
 
 export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, members, lockers, showToast }) {
   const [query, setQuery] = useState('');
@@ -41,7 +42,7 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
     setSuccessResult(null);
 
     try {
-      const res = await fetch('http://localhost:5000/api/attendance/checkin', {
+      const res = await fetch(`${API_BASE_URL}/api/attendance/checkin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, lockerNumber })

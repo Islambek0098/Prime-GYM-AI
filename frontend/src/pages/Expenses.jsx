@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Wallet, Plus, Trash2, Calendar, Tag, DollarSign, AlertCircle, TrendingDown } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Expenses({ expenses = [], onRefresh, showToast }) {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -38,7 +39,7 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/expenses', {
+      const res = await fetch(`${API_BASE_URL}/api/expenses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -76,7 +77,7 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
     if (!window.confirm(`"${title}" harajatini o'chirmoqchimisiz?`)) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/expenses/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/expenses/${id}`, { method: 'DELETE' });
       if (res.ok) {
         if (showToast) showToast("Harajat yozuvi o'chirildi", "info");
         onRefresh();

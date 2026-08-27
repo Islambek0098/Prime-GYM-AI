@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from './config';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import CheckInModal from './components/CheckInModal';
@@ -50,12 +51,12 @@ export default function App() {
   const fetchAllData = async () => {
     try {
       const [memRes, subRes, attRes, posRes, setRes, expRes] = await Promise.all([
-        fetch('http://localhost:5000/api/members').then(r => r.json()),
-        fetch('http://localhost:5000/api/subscriptions').then(r => r.json()),
-        fetch('http://localhost:5000/api/attendance').then(r => r.json()),
-        fetch('http://localhost:5000/api/pos').then(r => r.json()),
-        fetch('http://localhost:5000/api/settings').then(r => r.json()),
-        fetch('http://localhost:5000/api/expenses').then(r => r.json()).catch(() => [])
+        fetch(`${API_BASE_URL}/api/members`).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/subscriptions`).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/attendance`).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/pos`).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/settings`).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/expenses`).then(r => r.json()).catch(() => [])
       ]);
 
       setMembers(memRes || []);

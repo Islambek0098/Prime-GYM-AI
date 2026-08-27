@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CreditCard, Plus, Check, Edit, Trash2, Dumbbell, Sparkles } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Subscriptions({ subscriptions, onRefresh, showToast }) {
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,7 @@ export default function Subscriptions({ subscriptions, onRefresh, showToast }) {
   const handleDelete = async (id) => {
     if (!window.confirm("Tarifni o'chirmoqchimisiz?")) return;
     try {
-      await fetch(`http://localhost:5000/api/subscriptions/${id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/subscriptions/${id}`, { method: 'DELETE' });
       if (showToast) showToast("Tarif o'chirildi", "info");
       onRefresh();
     } catch (err) {
@@ -40,8 +41,8 @@ export default function Subscriptions({ subscriptions, onRefresh, showToast }) {
     e.preventDefault();
     try {
       const url = editingSub 
-        ? `http://localhost:5000/api/subscriptions/${editingSub.id}`
-        : 'http://localhost:5000/api/subscriptions';
+        ? `${API_BASE_URL}/api/subscriptions/${editingSub.id}`
+        : `${API_BASE_URL}/api/subscriptions`;
       
       const method = editingSub ? 'PUT' : 'POST';
 

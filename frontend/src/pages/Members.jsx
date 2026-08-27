@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../config';
 import { 
   Users, 
   Search, 
@@ -56,7 +57,7 @@ export default function Members({ members, subscriptions, onRefresh, onOpenAddMe
   const handleDelete = async (id) => {
     if (!window.confirm("Rostdan ham ushbu mijozni o'chirmoqchimisiz?")) return;
     try {
-      await fetch(`http://localhost:5000/api/members/${id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/members/${id}`, { method: 'DELETE' });
       if (showToast) showToast("Mijoz o'chirildi", "info");
       onRefresh();
     } catch (err) {
@@ -66,7 +67,7 @@ export default function Members({ members, subscriptions, onRefresh, onOpenAddMe
 
   const handleSendTelegram = async (memberId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/members/${memberId}/notify`, { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/members/${memberId}/notify`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
         if (showToast) showToast("Telegram xabarnomasi yuborildi!", "info");
@@ -88,7 +89,7 @@ export default function Members({ members, subscriptions, onRefresh, onOpenAddMe
     setLoading(true);
     try {
       const sub = subscriptions.find(s => s.id === renewSubId);
-      const res = await fetch(`http://localhost:5000/api/members/${selectedMemberForRenew.id}/renew`, {
+      const res = await fetch(`${API_BASE_URL}/api/members/${selectedMemberForRenew.id}/renew`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -115,7 +116,7 @@ export default function Members({ members, subscriptions, onRefresh, onOpenAddMe
   };
 
   const handleDownloadExcel = () => {
-    window.open('http://localhost:5000/api/settings/export-csv/members', '_blank');
+    window.open(`${API_BASE_URL}/api/settings/export-csv/members`, '_blank');
   };
 
   return (

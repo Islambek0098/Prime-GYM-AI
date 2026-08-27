@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../config';
 import { 
   Users, 
   CreditCard, 
@@ -167,7 +168,7 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
 
   const handleNotifyTelegram = async (memberId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/members/${memberId}/notify`, { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/members/${memberId}/notify`, { method: 'POST' });
       if (res.ok) {
         alert("Telegram xabarnomasi yuborildi!");
       }

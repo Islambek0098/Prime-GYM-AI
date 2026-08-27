@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Settings as SettingsIcon, FileSpreadsheet, Bot, Download, Send, CheckCircle2, Save, HelpCircle, AlertCircle, RefreshCw, Megaphone, Key } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Settings({ settings, onRefresh, showToast }) {
   const [gymName, setGymName] = useState(settings.gymName || 'CHAMPION GYM & FITNESS');
@@ -73,7 +74,7 @@ export default function Settings({ settings, onRefresh, showToast }) {
     if (e) e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/settings', {
+      const res = await fetch(`${API_BASE_URL}/api/settings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -108,7 +109,7 @@ export default function Settings({ settings, onRefresh, showToast }) {
     }
     setTelegramStatus({ loading: true, message: "Telegram botga ulanyapti..." });
     try {
-      const res = await fetch('http://localhost:5000/api/settings/test-telegram', {
+      const res = await fetch(`${API_BASE_URL}/api/settings/test-telegram`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chatId: testChatId })
@@ -135,7 +136,7 @@ export default function Settings({ settings, onRefresh, showToast }) {
     setBroadcastStatus({ loading: true, message: "Ommaviy xabarnoma barcha mijozlarga yuborilmoqda..." });
 
     try {
-      const res = await fetch('http://localhost:5000/api/settings/broadcast-telegram', {
+      const res = await fetch(`${API_BASE_URL}/api/settings/broadcast-telegram`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: broadcastMessage.trim() })
@@ -159,7 +160,7 @@ export default function Settings({ settings, onRefresh, showToast }) {
   const handleTestSheets = async () => {
     setSheetsStatus({ loading: true, message: "Google Sheets tekshirilmoqda..." });
     try {
-      const res = await fetch('http://localhost:5000/api/settings/sync-sheets', {
+      const res = await fetch(`${API_BASE_URL}/api/settings/sync-sheets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sheetsId, credentialsJSON })
@@ -176,7 +177,7 @@ export default function Settings({ settings, onRefresh, showToast }) {
   };
 
   const handleDownloadCSV = (collectionName) => {
-    window.open(`http://localhost:5000/api/settings/export-csv/${collectionName}`, '_blank');
+    window.open(`${API_BASE_URL}/api/settings/export-csv/${collectionName}`, '_blank');
   };
 
   return (

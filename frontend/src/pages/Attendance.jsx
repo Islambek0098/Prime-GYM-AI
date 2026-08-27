@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarCheck2, UserCheck, Key, LogOut, Dumbbell, User, Sparkles } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Attendance({ attendance, lockers, onRefresh, onOpenCheckIn, showToast }) {
   const [activeGenderTab, setActiveGenderTab] = useState('male'); // 'male' or 'female'
@@ -8,7 +9,7 @@ export default function Attendance({ attendance, lockers, onRefresh, onOpenCheck
 
   const handleCheckout = async (attendanceId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/attendance/checkout/${attendanceId}`, { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/attendance/checkout/${attendanceId}`, { method: 'POST' });
       if (res.ok) {
         if (showToast) showToast("Mijoz zaldan chiqdi va shkaf bo'shatildi!", "info");
         onRefresh();

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Phone, Send, CreditCard, DollarSign, AlertCircle, PlusCircle } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function MemberModal({ isOpen, onClose, onSave, subscriptions, memberToEdit, showToast }) {
   const [formData, setFormData] = useState({
@@ -135,8 +136,8 @@ export default function MemberModal({ isOpen, onClose, onSave, subscriptions, me
 
     try {
       const url = memberToEdit 
-        ? `http://localhost:5000/api/members/${memberToEdit.id}`
-        : 'http://localhost:5000/api/members';
+        ? `${API_BASE_URL}/api/members/${memberToEdit.id}`
+        : `${API_BASE_URL}/api/members`;
       
       const method = memberToEdit ? 'PUT' : 'POST';
 

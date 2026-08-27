@@ -25,7 +25,7 @@ export default function Attendance({ attendance, lockers, onRefresh, onOpenCheck
   const freeCount = currentLockers.length - occupiedCount;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
       
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -153,7 +153,7 @@ export default function Attendance({ attendance, lockers, onRefresh, onOpenCheck
             </div>
 
             {/* Locker Grid Icons */}
-            <div className="grid grid-cols-5 gap-2.5 max-h-96 overflow-y-auto pr-1">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 max-h-96 overflow-y-auto pr-1">
               {currentLockers.map((lock) => (
                 <div
                   key={lock.number}

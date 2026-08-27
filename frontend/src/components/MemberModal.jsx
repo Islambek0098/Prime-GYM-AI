@@ -176,12 +176,12 @@ export default function MemberModal({ isOpen, onClose, onSave, subscriptions, me
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-slate-900 border border-slate-800 w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden">
         
         {/* Header */}
-        <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <User className="w-5 h-5 text-cyan-400" />
+        <div className="p-5 sm:p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900 shrink-0">
+          <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <User className="w-5 h-5 text-cyan-400 shrink-0" />
             <span>{memberToEdit ? "Mijoz To'lovini Boshqarish / Tahrirlash" : "Yangi Mijoz Qo'shish"}</span>
           </h3>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800">
@@ -190,7 +190,7 @@ export default function MemberModal({ isOpen, onClose, onSave, subscriptions, me
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[75vh]">
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1">
               Familiyasi va Ismi <span className="text-rose-400">*</span>

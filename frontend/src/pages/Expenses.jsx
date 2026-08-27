@@ -88,7 +88,7 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
       
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -110,7 +110,7 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         <div className="glass-card p-6 rounded-2xl border border-rose-500/30 bg-rose-500/5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">Jami Harajatlar</span>

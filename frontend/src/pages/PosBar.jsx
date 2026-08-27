@@ -18,6 +18,8 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
   const [loading, setLoading] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
 
+  const [posMobileTab, setPosMobileTab] = useState('catalog'); // 'catalog' | 'cart'
+
   // Filtered customer list for real-time POS customer search (in-gym members prioritized first)
   const cleanCustQuery = customerSearch.toLowerCase().trim().replace(/\s+/g, '');
   const filteredCustomerList = members.filter(m => {
@@ -196,7 +198,7 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
       
       {/* Header & Sales Stats */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -208,7 +210,7 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
           <p className="text-xs text-slate-400">Kam qolgan mahsulotlar eng tepada, Naqd va Karta sotuvlari tahlili</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Quick Payment Totals Badge */}
           <div className="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800 text-xs">
             <span className="text-amber-400 font-bold flex items-center gap-1">
@@ -234,11 +236,31 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
         </div>
       </div>
 
+      {/* Mobile View Switcher Tab */}
+      <div className="flex items-center gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 lg:hidden text-xs font-bold">
+        <button
+          onClick={() => setPosMobileTab('catalog')}
+          className={`flex-1 py-2.5 rounded-lg text-center transition ${
+            posMobileTab === 'catalog' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'text-slate-400'
+          }`}
+        >
+          📦 Mahsulotlar Katalogi
+        </button>
+        <button
+          onClick={() => setPosMobileTab('cart')}
+          className={`flex-1 py-2.5 rounded-lg text-center transition flex items-center justify-center gap-1.5 ${
+            posMobileTab === 'cart' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'text-slate-400'
+          }`}
+        >
+          🛒 Savat ({cart.length})
+        </button>
+      </div>
+
       {/* Main Grid: Left Catalog, Right Shopping Cart */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
         
         {/* Left 8 Cols: Product Catalog */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className={`lg:col-span-8 space-y-6 ${posMobileTab === 'catalog' ? 'block' : 'hidden lg:block'}`}>
           
           {/* Filters & Search */}
           <div className="glass-card p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
@@ -327,7 +349,7 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
         </div>
 
         {/* Right 4 Cols: Shopping Cart & Checkout */}
-        <div className="lg:col-span-4 space-y-4">
+        <div className={`lg:col-span-4 space-y-4 ${posMobileTab === 'cart' ? 'block' : 'hidden lg:block'}`}>
           <div className="glass-card p-6 rounded-2xl space-y-6 sticky top-24">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <h3 className="text-base font-bold text-white flex items-center gap-2">

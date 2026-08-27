@@ -70,7 +70,7 @@ export default function Subscriptions({ subscriptions, onRefresh, showToast }) {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
       
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -92,7 +92,7 @@ export default function Subscriptions({ subscriptions, onRefresh, showToast }) {
       </div>
 
       {/* Pricing Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {subscriptions.map(sub => (
           <div
             key={sub.id}

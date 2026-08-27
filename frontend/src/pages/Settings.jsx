@@ -181,7 +181,7 @@ export default function Settings({ settings, onRefresh, showToast }) {
   };
 
   return (
-    <div className="p-8 space-y-8 max-w-5xl">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full lg:max-w-5xl overflow-hidden">
       
       {/* Header */}
       <div>

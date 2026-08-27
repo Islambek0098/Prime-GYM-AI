@@ -82,6 +82,18 @@ export default function App() {
     setIsMemberModalOpen(true);
   };
 
+  // Sidebar Responsiveness state
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const handleToggleMenu = () => {
+    if (window.innerWidth < 1024) {
+      setIsMobileOpen(prev => !prev);
+    } else {
+      setIsSidebarCollapsed(prev => !prev);
+    }
+  };
+
   const handleOpenEditMember = (member) => {
     setMemberToEdit(member);
     setIsMemberModalOpen(true);
@@ -99,16 +111,22 @@ export default function App() {
         setActiveTab={setActiveTab} 
         gymName={settings.gymName} 
         gymLogo={settings.gymLogo}
+        isMobileOpen={isMobileOpen}
+        setIsMobileOpen={setIsMobileOpen}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
         <Navbar 
           onOpenCheckIn={() => setIsCheckInOpen(true)}
           onOpenAddMember={handleOpenAddMember}
           activeVisitorsCount={activeVisitorsCount}
           theme={theme}
           onToggleTheme={toggleTheme}
+          onToggleMenu={handleToggleMenu}
+          isSidebarCollapsed={isSidebarCollapsed}
         />
 
         <main className="flex-1 overflow-y-auto">

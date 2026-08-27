@@ -257,7 +257,7 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
           </div>
           <div className="mt-4">
             <h3 className="text-2xl font-extrabold text-white tracking-tight group-hover:text-amber-300 transition">
-              {totalPosRevenue.toLocaleString()} <span className="text-xs text-slate-400 font-medium">SO'M</span>
+              {totalPosRevenue.toLocaleString()} <span className="text-xs text-slate-400 font-medium">SWM</span>
             </h3>
             <p className="text-xs text-amber-400 font-semibold mt-1">
               {posSales.length} ta sotuv tranzaksiyasi (Bosing)

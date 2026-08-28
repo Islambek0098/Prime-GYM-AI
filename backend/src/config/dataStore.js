@@ -45,22 +45,69 @@ function getFilePath(key) {
 
 function loadCollection(key) {
   const filePath = getFilePath(key);
+  const backupPath = `${filePath}.bak`;
+
   if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify(initialData[key] || [], null, 2), 'utf-8');
-    return initialData[key] || [];
+    if (fs.existsSync(backupPath)) {
+      try {
+        const rawBak = fs.readFileSync(backupPath, 'utf-8');
+        const parsedBak = JSON.parse(rawBak);
+        fs.writeFileSync(filePath, rawBak, 'utf-8');
+        return parsedBak;
+      } catch (e) {}
+    }
+    const defaultVal = initialData[key] || [];
+    fs.writeFileSync(filePath, JSON.stringify(defaultVal, null, 2), 'utf-8');
+    return defaultVal;
   }
+
   try {
     const raw = fs.readFileSync(filePath, 'utf-8');
+    if (!raw.trim()) throw new Error("Empty JSON file content");
     return JSON.parse(raw);
   } catch (err) {
-    console.error(`Error loading ${key}:`, err);
+    console.error(`Error loading ${key}, attempting backup recovery:`, err.message);
+    if (fs.existsSync(backupPath)) {
+      try {
+        const rawBak = fs.readFileSync(backupPath, 'utf-8');
+        const parsedBak = JSON.parse(rawBak);
+        fs.writeFileSync(filePath, rawBak, 'utf-8');
+        console.log(`✅ ${key} ma'lumotlari zaxira faylidan tiklandi!`);
+        return parsedBak;
+      } catch (bakErr) {
+        console.error(`Backup recovery failed for ${key}:`, bakErr.message);
+      }
+    }
     return initialData[key] || [];
   }
 }
 
 function saveCollection(key, data) {
   const filePath = getFilePath(key);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  const tempPath = `${filePath}.tmp`;
+  const backupPath = `${filePath}.bak`;
+
+  try {
+    // 1. Write to temporary file
+    fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
+
+    // 2. Backup current valid file if exists
+    if (fs.existsSync(filePath)) {
+      try {
+        fs.copyFileSync(filePath, backupPath);
+      } catch (e) {}
+    }
+
+    // 3. Atomically rename temp file to main file
+    fs.renameSync(tempPath, filePath);
+  } catch (err) {
+    console.error(`Error saving ${key}:`, err.message);
+    try {
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (directErr) {
+      console.error(`Direct write failed for ${key}:`, directErr.message);
+    }
+  }
 }
 
 module.exports = {

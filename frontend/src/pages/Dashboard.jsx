@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config';
 import { 
   Users, 
@@ -15,7 +15,10 @@ import {
   X,
   Calendar,
   Layers,
-  CheckCircle2
+  CheckCircle2,
+  Brain,
+  Clock,
+  Sparkles
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -29,6 +32,17 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
   const [revenuePeriod, setRevenuePeriod] = useState('today'); // 'today' | 'week' | 'month' | 'custom'
   const [revenueCustomDate, setRevenueCustomDate] = useState(new Date().toISOString().split('T')[0]);
   const [revenuePaymentFilter, setRevenuePaymentFilter] = useState('All'); // 'All' | 'Naqd' | 'Karta / Click'
+
+  // AI Smart Analytics state
+  const [churnData, setChurnData] = useState(null);
+  const [peakHoursData, setPeakHoursData] = useState([]);
+  const [forecastData, setForecastData] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/analytics/churn-risk`).then(r => r.json()).then(d => setChurnData(d)).catch(() => {});
+    fetch(`${API_BASE_URL}/api/analytics/peak-hours`).then(r => r.json()).then(d => setPeakHoursData(d)).catch(() => {});
+    fetch(`${API_BASE_URL}/api/analytics/forecast`).then(r => r.json()).then(d => setForecastData(d)).catch(() => {});
+  }, []);
 
   const activeMembers = members.filter(m => m.status === 'Active');
   const expiredMembers = members.filter(m => m.status === 'Expired');
@@ -266,6 +280,124 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
           </div>
         </div>
 
+      </div>
+
+      {/* AI Smart Analytics Section */}
+      <div className="glass-card p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/20 shadow-xl space-y-6">
+        <div className="flex items-center justify-between border-b border-indigo-500/10 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-md">
+              <Brain className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>AI Smart Analytics & Tahlil</span>
+                <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-extrabold uppercase border border-indigo-500/30">
+                  <Sparkles className="w-3 h-3 inline mr-1" />
+                  Sun'iy Intellekt
+                </span>
+              </h3>
+              <p className="text-xs text-slate-400">Churn Risk (Yo'qolish xavfidagi mijozlar), Zal Gavjumligi va Tushum Prognozi</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Churn Risk */}
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold">
+              <span className="text-rose-400 flex items-center gap-1">
+                <AlertTriangle className="w-4 h-4" />
+                Riskdagi Mijozlar (Churn Risk)
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-400 font-bold">
+                {churnData ? churnData.count : 0} kishi
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              7 kundan buyon kelmagan yoki obunasi tugab borayotgan mijozlar.
+            </p>
+            {churnData && churnData.riskMembers && churnData.riskMembers.length > 0 ? (
+              <div className="space-y-2 pt-1 max-h-36 overflow-y-auto pr-1">
+                {churnData.riskMembers.slice(0, 3).map(m => (
+                  <div key={m.id} className="p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-[11px]">
+                    <div>
+                      <span className="font-bold text-white block truncate max-w-[120px]">{m.fullName}</span>
+                      <span className="text-slate-400 text-[10px]">{m.riskReason}</span>
+                    </div>
+                    <button 
+                      onClick={() => handleNotifyTelegram(m.id)}
+                      className="px-2 py-1 rounded bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 font-bold text-[10px] transition"
+                    >
+                      Eslatish 📲
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-2 text-xs text-emerald-400 font-semibold">
+                ✅ Risk ostida mijozlar yo'q!
+              </div>
+            )}
+          </div>
+
+          {/* Card 2: Peak Hours */}
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold">
+              <span className="text-cyan-400 flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                Zal Gavjumlik Soatlari (Peak Hours)
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              Zalga mijozlar eng ko'p tashrif buyuradigan tig'iz soatlar.
+            </p>
+            <div className="h-28 w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={peakHoursData}>
+                  <XAxis dataKey="timeSlot" stroke="#64748b" fontSize={9} tickLine={false} />
+                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px', color: '#fff' }} />
+                  <Bar dataKey="visitsCount" fill="#38bdf8" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Card 3: Revenue Forecast */}
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold">
+              <span className="text-emerald-400 flex items-center gap-1">
+                <TrendingUp className="w-4 h-4" />
+                Kelasi Oy Daromad Prognozi
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 font-bold">
+                AI Forecast
+              </span>
+            </div>
+            {forecastData ? (
+              <div className="space-y-2 pt-1">
+                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[11px] text-slate-400 block">Kutilayotgan Jami Tushum:</span>
+                  <span className="text-lg font-black text-emerald-400">
+                    {(forecastData.totalForecast || 0).toLocaleString()} SO'M
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-300">
+                  <div className="p-1.5 rounded bg-slate-900 border border-slate-800">
+                    <span>Obunalar: </span>
+                    <strong className="text-cyan-400">{(forecastData.projectedSubRevenue || 0).toLocaleString()}</strong>
+                  </div>
+                  <div className="p-1.5 rounded bg-slate-900 border border-slate-800">
+                    <span>Fitnes Bar: </span>
+                    <strong className="text-amber-400">{(forecastData.avgMonthlyPosRevenue || 0).toLocaleString()}</strong>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4 text-xs text-slate-500">Hisoblanmoqda...</div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Main Grid Section */}

@@ -10,6 +10,7 @@ import Toast from './components/Toast';
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Members = lazy(() => import('./pages/Members'));
 const Attendance = lazy(() => import('./pages/Attendance'));
+const Trainers = lazy(() => import('./pages/Trainers'));
 const PosBar = lazy(() => import('./pages/PosBar'));
 const Subscriptions = lazy(() => import('./pages/Subscriptions'));
 const Settings = lazy(() => import('./pages/Settings'));
@@ -185,6 +186,13 @@ export default function App() {
                 lockers={lockers}
                 onRefresh={fetchAllData}
                 onOpenCheckIn={() => setIsCheckInOpen(true)}
+                showToast={showToast}
+              />
+            )}
+
+            {activeTab === 'trainers' && (
+              <Trainers 
+                members={members}
                 showToast={showToast}
               />
             )}

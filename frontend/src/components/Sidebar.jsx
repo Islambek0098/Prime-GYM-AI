@@ -26,6 +26,7 @@ export default function Sidebar({
     { id: 'dashboard', label: 'Bosh Sahifa', icon: LayoutDashboard },
     { id: 'members', label: 'Mijozlar Bazasi', icon: Users },
     { id: 'attendance', label: 'Davomat & Shkaflar', icon: CalendarCheck2 },
+    { id: 'trainers', label: 'Murabbiylar & PT', icon: Dumbbell },
     { id: 'pos', label: 'Fitnes Bar (POS)', icon: ShoppingBag },
     { id: 'subscriptions', label: 'Tariflar / Abonement', icon: CreditCard },
     { id: 'finance', label: 'Finans (Moliya)', icon: DollarSign },

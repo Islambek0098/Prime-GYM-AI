@@ -146,8 +146,11 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Mijoz Telefon raqami, ID kodi yoki Ismi:
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <span>Mijoz Telefon raqami, ID kodi yoki Ismi:</span>
+                  <span className="text-[10px] text-cyan-400 font-bold flex items-center gap-1">
+                    <span>📷 QR / Skaner tayyor</span>
+                  </span>
                 </label>
                 <div className="relative">
                   <Search className="w-5 h-5 text-slate-500 absolute left-3.5 top-3" />
@@ -155,7 +158,10 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                     type="text"
                     value={query}
                     onChange={(e) => {
-                      const val = e.target.value;
+                      let val = e.target.value;
+                      if (val.includes('GYM:MEM:')) {
+                        val = val.replace('GYM:MEM:', '').trim();
+                      }
                       setQuery(val);
                       setShowSuggestions(true);
                       const qClean = val.toLowerCase().trim();
@@ -169,7 +175,7 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                       }
                     }}
                     onFocus={() => setShowSuggestions(true)}
-                    placeholder="Masalan: +998 90 123 45 67 yoki M-1001"
+                    placeholder="Skanerlang, QR kod yoki Ism/ID/Tel kiritish..."
                     className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-sm"
                     autoFocus
                     required

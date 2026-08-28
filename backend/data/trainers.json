@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tr_1",
+    "fullName": "Jasur Rahimov",
+    "phone": "+998 90 111 22 33",
+    "specialty": "Bodibilding & Krossfit",
+    "commissionRate": 30,
+    "assignedMembers": [
+      {
+        "memberId": "M-1001",
+        "memberName": "Alisher Qodirov",
+        "remainingSessions": 8
+      }
+    ],
+    "createdDate": "2026-08-01"
+  },
+  {
+    "id": "tr_2",
+    "fullName": "Dildora Karimova",
+    "phone": "+998 93 444 55 66",
+    "specialty": "Fitnes & Aerobika",
+    "commissionRate": 35,
+    "assignedMembers": [],
+    "createdDate": "2026-08-10"
+  }
+]

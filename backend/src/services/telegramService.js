@@ -131,9 +131,29 @@ async function notifyExpiryWarning(member, daysLeft) {
   }
 }
 
+async function checkAndSendExpiringReminders() {
+  const members = loadCollection('members');
+  const today = new Date();
+  let count = 0;
+
+  for (const m of members) {
+    if (!m.telegramId || !m.endDate) continue;
+    const end = new Date(m.endDate);
+    const diffTime = end.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 3 || diffDays === 1) {
+      await notifyExpiryWarning(m, diffDays);
+      count++;
+    }
+  }
+  return count;
+}
+
 module.exports = {
   sendTelegramMessage,
   broadcastTelegramMessage,
   notifyCheckIn,
-  notifyExpiryWarning
+  notifyExpiryWarning,
+  checkAndSendExpiringReminders
 };

@@ -32,7 +32,7 @@ export default function Navbar({
           </span>
         </button>
 
-        <div className="min-w-0">
+        <div className="min-w-0 hidden sm:block">
           <h2 className="text-sm sm:text-lg font-bold text-white flex items-center gap-1.5 truncate">
             <span>Hush kelibsiz!</span> 👋
           </h2>

@@ -12,6 +12,7 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showLockerSuggestions, setShowLockerSuggestions] = useState(false);
+  const [selectedGender, setSelectedGender] = useState('Erkak');
 
   const cleanQuery = query.toLowerCase().trim().replace(/\s+/g, '');
   const suggestions = (query.trim().length >= 1 && members) ? members.filter(m => {
@@ -22,11 +23,12 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
     return nameMatch || idMatch || phoneMatch;
   }).slice(0, 6) : [];
 
-  // Filter only Free lockers
+  // Filter Free lockers by gender
   const maleFree = (lockers?.male || []).filter(l => l.status === 'Free');
   const femaleFree = (lockers?.female || []).filter(l => l.status === 'Free');
-  const allFreeLockers = [...maleFree, ...femaleFree];
-  const filteredFreeLockers = allFreeLockers.filter(l => {
+  const genderLockers = selectedGender === 'Ayol' ? femaleFree : maleFree;
+
+  const filteredFreeLockers = genderLockers.filter(l => {
     if (!lockerNumber.trim()) return true;
     return l.number.toLowerCase().includes(lockerNumber.toLowerCase().trim());
   });
@@ -153,8 +155,18 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                     type="text"
                     value={query}
                     onChange={(e) => {
-                      setQuery(e.target.value);
+                      const val = e.target.value;
+                      setQuery(val);
                       setShowSuggestions(true);
+                      const qClean = val.toLowerCase().trim();
+                      const matched = members?.find(m => 
+                        m.fullName.toLowerCase() === qClean || 
+                        m.id.toLowerCase() === qClean || 
+                        (m.phone && m.phone.replace(/\s+/g, '') === qClean.replace(/\s+/g, ''))
+                      );
+                      if (matched && matched.gender) {
+                        setSelectedGender(matched.gender);
+                      }
                     }}
                     onFocus={() => setShowSuggestions(true)}
                     placeholder="Masalan: +998 90 123 45 67 yoki M-1001"
@@ -171,13 +183,23 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                           key={m.id}
                           onClick={() => {
                             setQuery(m.fullName);
+                            if (m.gender) setSelectedGender(m.gender);
                             setShowSuggestions(false);
                           }}
                           className="p-3 hover:bg-slate-800/80 cursor-pointer transition flex items-center justify-between text-xs"
                         >
                           <div>
                             <span className="font-bold text-white block">{m.fullName}</span>
-                            <span className="text-[11px] text-slate-400">{m.phone} • <span className="text-cyan-400 font-semibold">{m.id}</span></span>
+                            <span className="text-[11px] text-slate-400">
+                              {m.phone} • <span className="text-cyan-400 font-semibold">{m.id}</span>
+                              {m.gender && (
+                                <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  m.gender === 'Ayol' ? 'bg-pink-500/20 text-pink-400' : 'bg-blue-500/20 text-blue-400'
+                                }`}>
+                                  {m.gender === 'Ayol' ? '👩 Ayol' : '👨 Erkak'}
+                                </span>
+                              )}
+                            </span>
                           </div>
                           <div>
                             {m.status === 'Active' ? (
@@ -197,11 +219,46 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                 </div>
               </div>
 
+              {/* Gender Selector for Lockers */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Jinsga qarab shkaflar tanlash:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedGender('Erkak')}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border ${
+                      selectedGender === 'Erkak' 
+                        ? 'bg-blue-500/20 text-blue-400 border-blue-500/40 shadow-md shadow-blue-500/10' 
+                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <span>👨 Erkaklar</span>
+                    <span className="text-[10px] opacity-75">({maleFree.length} bo'sh)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedGender('Ayol')}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border ${
+                      selectedGender === 'Ayol' 
+                        ? 'bg-pink-500/20 text-pink-400 border-pink-500/40 shadow-md shadow-pink-500/10' 
+                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <span>👩 Ayollar</span>
+                    <span className="text-[10px] opacity-75">({femaleFree.length} bo'sh)</span>
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                  <span>Shkaf (Locker) raqami (Faqat bo'sh shkaflar):</span>
+                  <span>
+                    Shkaf ({selectedGender === 'Ayol' ? '👩 Ayollar' : '👨 Erkaklar'}) raqami:
+                  </span>
                   <span className="text-[10px] text-cyan-400 font-bold">
-                    {allFreeLockers.length} ta bo'sh shkaf bor
+                    {genderLockers.length} ta bo'sh shkaf bor
                   </span>
                 </label>
                 <div className="relative">
@@ -214,7 +271,7 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                       setShowLockerSuggestions(true);
                     }}
                     onFocus={() => setShowLockerSuggestions(true)}
-                    placeholder="Masalan: M-14 yoki F-05 (bo'sh qoldirilsa avto biriktiradi)"
+                    placeholder={`Masalan: ${selectedGender === 'Ayol' ? 'F-05' : 'M-14'} (bo'sh qoldirilsa avto biriktiradi)`}
                     className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-sm"
                   />
 
@@ -222,7 +279,7 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                   {showLockerSuggestions && (
                     <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden p-2 max-h-52 overflow-y-auto">
                       <div className="text-[11px] font-bold text-slate-400 px-2 py-1 uppercase tracking-wider">
-                        Faqat Bo'sh Shkaflar Ro'yxati:
+                        Faqat {selectedGender === 'Ayol' ? '👩 Ayollar' : '👨 Erkaklar'} Bo'sh Shkaflari:
                       </div>
                       {filteredFreeLockers.length === 0 ? (
                         <div className="p-3 text-center text-xs text-rose-400 font-semibold">

@@ -7,13 +7,9 @@ import {
   ShoppingBag, 
   Settings, 
   Dumbbell, 
-  Bot,
-  FileSpreadsheet,
   DollarSign,
   Wallet,
-  X,
-  ChevronLeft,
-  ChevronRight
+  X
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -100,15 +96,6 @@ export default function Sidebar({
             >
               <X className="w-5 h-5" />
             </button>
-
-            {/* Desktop Collapse Button */}
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition border border-slate-800"
-              title={isCollapsed ? "Menuni kengaytirish" : "Menuni yashirish"}
-            >
-              {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-            </button>
           </div>
 
           {/* Navigation Menu */}
@@ -135,38 +122,6 @@ export default function Sidebar({
               );
             })}
           </nav>
-        </div>
-
-        {/* Integration Badges Footer */}
-        <div className="p-3 lg:p-4 border-t border-slate-800/80 space-y-2">
-          {!isCollapsed ? (
-            <>
-              <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-slate-300 min-w-0">
-                  <FileSpreadsheet className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="font-medium truncate">Google Sheets</span>
-                </div>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-slate-300 min-w-0">
-                  <Bot className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span className="font-medium truncate">Telegram Bot</span>
-                </div>
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0"></span>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-2 py-1">
-              <div className="w-8 h-8 rounded-lg bg-slate-950/80 border border-slate-800 flex items-center justify-center" title="Google Sheets Faol">
-                <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-              </div>
-              <div className="w-8 h-8 rounded-lg bg-slate-950/80 border border-slate-800 flex items-center justify-center" title="Telegram Bot Faol">
-                <Bot className="w-4 h-4 text-blue-400" />
-              </div>
-            </div>
-          )}
         </div>
       </aside>
     </>

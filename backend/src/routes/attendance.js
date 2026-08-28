@@ -69,6 +69,22 @@ router.post('/checkin', async (req, res) => {
     return res.status(404).json({ error: "Mijoz topilmadi! Telefon raqami yoki ID xato kiritilgan bo'lishi mumkin." });
   }
 
+  // Prevent duplicate check-in if member is already in the gym ("Zalda")
+  const existingAttendance = attendance.find(a => 
+    (a.memberId === member.id || 
+     (a.phone && member.phone && a.phone.replace(/\s+/g, '') === member.phone.replace(/\s+/g, '')) ||
+     (a.memberName && a.memberName.toLowerCase() === member.fullName.toLowerCase())) && 
+    a.status === 'Zalda'
+  );
+
+  if (existingAttendance) {
+    return res.status(400).json({ 
+      error: `Ushbu mijoz (${member.fullName}) allaqachon ZALDA! (Shkaf #${existingAttendance.lockerNumber}). Avval chiqib ketishi (check-out) kerak.`,
+      member,
+      existingAttendance
+    });
+  }
+
   // Check if member subscription is valid
   const today = new Date().toISOString().split('T')[0];
   if (member.endDate < today || member.status === 'Expired') {

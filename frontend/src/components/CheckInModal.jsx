@@ -3,7 +3,7 @@ import { X, UserCheck, Key, AlertCircle, CheckCircle2, Search, Send, Dumbbell } 
 import confetti from 'canvas-confetti';
 import { API_BASE_URL } from '../config';
 
-export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, members, lockers, showToast }) {
+export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, members, attendance = [], lockers, showToast }) {
   const [query, setQuery] = useState('');
   const [lockerNumber, setLockerNumber] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,14 +14,39 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
   const [showLockerSuggestions, setShowLockerSuggestions] = useState(false);
   const [selectedGender, setSelectedGender] = useState('Erkak');
 
+  // Check which members are currently checked-in ("Zalda")
+  const zaldaRecords = (attendance || []).filter(a => a.status === 'Zalda');
+  const isMemberInGym = (m) => {
+    if (!m) return false;
+    const cleanP = m.phone ? m.phone.replace(/\s+/g, '') : '';
+    const cleanN = m.fullName ? m.fullName.toLowerCase().trim() : '';
+    return zaldaRecords.some(a => 
+      a.memberId === m.id || 
+      (a.phone && cleanP && a.phone.replace(/\s+/g, '') === cleanP) ||
+      (a.memberName && cleanN && a.memberName.toLowerCase().trim() === cleanN)
+    );
+  };
+
   const cleanQuery = query.toLowerCase().trim().replace(/\s+/g, '');
+  // Suggestions exclude members who are currently in the gym
   const suggestions = (query.trim().length >= 1 && members) ? members.filter(m => {
+    if (isMemberInGym(m)) return false;
     const qLower = query.toLowerCase().trim();
     const nameMatch = m.fullName.toLowerCase().includes(qLower);
     const idMatch = m.id.toLowerCase().includes(qLower);
     const phoneMatch = m.phone ? m.phone.replace(/\s+/g, '').includes(cleanQuery) : false;
     return nameMatch || idMatch || phoneMatch;
   }).slice(0, 6) : [];
+
+  // Detect if typed query matches a member currently in gym
+  const matchedMemberInGym = members?.find(m => {
+    if (!query.trim()) return false;
+    const qClean = query.toLowerCase().trim();
+    const isMatch = m.fullName.toLowerCase() === qClean || 
+      m.id.toLowerCase() === qClean || 
+      (m.phone && m.phone.replace(/\s+/g, '') === qClean.replace(/\s+/g, ''));
+    return isMatch && isMemberInGym(m);
+  });
 
   // Filter Free lockers by gender
   const maleFree = (lockers?.male || []).filter(l => l.status === 'Free');
@@ -318,18 +343,31 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                 </div>
               </div>
 
+              {matchedMemberInGym && (
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-amber-400" />
+                  <span>
+                    <strong>{matchedMemberInGym.fullName}</strong> hozirda ZALDA! Ikkinchi marta Check-In qilib bo'lmaydi. (Chiqib ketgandan so'ng qayta kirishi mumkin).
+                  </span>
+                </div>
+              )}
+
               <div className="pt-3">
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-sm shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2"
+                  disabled={loading || Boolean(matchedMemberInGym)}
+                  className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 ${
+                    matchedMemberInGym 
+                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' 
+                      : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-emerald-500/20'
+                  }`}
                 >
                   {loading ? (
                     <span>Tekshirilmoqda...</span>
                   ) : (
                     <>
                       <UserCheck className="w-5 h-5" />
-                      <span>Zalga Kirishni Tasdiqlash</span>
+                      <span>{matchedMemberInGym ? "Mijoz Hozirda Zalda" : "Zalga Kirishni Tasdiqlash"}</span>
                     </>
                   )}
                 </button>

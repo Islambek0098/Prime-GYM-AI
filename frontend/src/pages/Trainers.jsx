@@ -35,12 +35,22 @@ export default function Trainers({ members, showToast }) {
   const [assignMemberId, setAssignMemberId] = useState('');
   const [assignSessions, setAssignSessions] = useState('10');
 
+  const parseJsonResponse = async (res) => {
+    const contentType = res.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await res.json();
+    }
+    throw new Error(`Server javob bermadi (Status ${res.status}). Iltimos, backend server (node server.js) qayta ishga tushirilganini tekshiring.`);
+  };
+
   const fetchTrainers = async () => {
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE_URL}/api/trainers`);
-      const data = await res.json();
-      setTrainers(data || []);
+      if (res.ok) {
+        const data = await parseJsonResponse(res);
+        setTrainers(Array.isArray(data) ? data : []);
+      }
     } catch (err) {
       console.error("Error fetching trainers:", err);
     } finally {
@@ -62,7 +72,7 @@ export default function Trainers({ members, showToast }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, phone, specialty, commissionRate })
       });
-      const data = await res.json();
+      const data = await parseJsonResponse(res);
 
       if (!res.ok) throw new Error(data.error || "Xatolik yuz berdi");
 
@@ -81,7 +91,8 @@ export default function Trainers({ members, showToast }) {
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/trainers/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error("O'chirishda xatolik yuz berdi");
+      const data = await parseJsonResponse(res);
+      if (!res.ok) throw new Error(data.error || "O'chirishda xatolik yuz berdi");
 
       showToast(`${name} o'chirildi`, "success");
       fetchTrainers();
@@ -109,7 +120,7 @@ export default function Trainers({ members, showToast }) {
           totalSessions: assignSessions
         })
       });
-      const data = await res.json();
+      const data = await parseJsonResponse(res);
 
       if (!res.ok) throw new Error(data.error || "Biriktirishda xatolik");
 
@@ -129,7 +140,7 @@ export default function Trainers({ members, showToast }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ trainerId, memberId })
       });
-      const data = await res.json();
+      const data = await parseJsonResponse(res);
 
       if (!res.ok) throw new Error(data.error || "Mashg'ulot ayirishda xatolik");
 

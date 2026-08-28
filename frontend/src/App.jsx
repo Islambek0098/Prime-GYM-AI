@@ -249,6 +249,7 @@ export default function App() {
         onClose={() => setIsCheckInOpen(false)}
         onCheckInSuccess={fetchAllData}
         members={members}
+        attendance={attendance}
         lockers={lockers}
         showToast={showToast}
       />

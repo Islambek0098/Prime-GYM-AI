@@ -76,7 +76,7 @@ export default function Sidebar({
                 </div>
               )}
               
-              {!isCollapsed && (
+              {(!isCollapsed || isMobileOpen) && (
                 <div className="min-w-0">
                   <h1 className="font-extrabold text-sm tracking-wide text-white leading-tight truncate">
                     {gymName || 'CHAMPION GYM'}
@@ -103,13 +103,14 @@ export default function Sidebar({
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
+              const showText = !isCollapsed || isMobileOpen;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleSelectTab(item.id)}
-                  title={isCollapsed ? item.label : undefined}
+                  title={!showText ? item.label : undefined}
                   className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    isCollapsed ? 'justify-center lg:px-2' : ''
+                    !showText ? 'justify-center lg:px-2' : ''
                   } ${
                     isActive
                       ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-cyan-400 border border-cyan-500/30 shadow-md shadow-cyan-500/5'
@@ -117,7 +118,7 @@ export default function Sidebar({
                   }`}
                 >
                   <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
-                  {!isCollapsed && <span className="truncate">{item.label}</span>}
+                  {showText && <span className="truncate">{item.label}</span>}
                 </button>
               );
             })}

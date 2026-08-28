@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { API_BASE_URL } from './config';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -6,14 +6,15 @@ import CheckInModal from './components/CheckInModal';
 import MemberModal from './components/MemberModal';
 import Toast from './components/Toast';
 
-import Dashboard from './pages/Dashboard';
-import Members from './pages/Members';
-import Attendance from './pages/Attendance';
-import PosBar from './pages/PosBar';
-import Subscriptions from './pages/Subscriptions';
-import Settings from './pages/Settings';
-import Finance from './pages/Finance';
-import Expenses from './pages/Expenses';
+// Lazy-loaded page components for Code Splitting & Performance
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Members = lazy(() => import('./pages/Members'));
+const Attendance = lazy(() => import('./pages/Attendance'));
+const PosBar = lazy(() => import('./pages/PosBar'));
+const Subscriptions = lazy(() => import('./pages/Subscriptions'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Finance = lazy(() => import('./pages/Finance'));
+const Expenses = lazy(() => import('./pages/Expenses'));
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -71,10 +72,28 @@ export default function App() {
     }
   };
 
+  // Smart Polling (Pauses when window/tab is hidden to save bandwidth & server load)
   useEffect(() => {
     fetchAllData();
-    const interval = setInterval(fetchAllData, 10000); // 10s polling
-    return () => clearInterval(interval);
+
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchAllData();
+      }
+    }, 10000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchAllData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const handleOpenAddMember = () => {
@@ -129,81 +148,90 @@ export default function App() {
           isSidebarCollapsed={isSidebarCollapsed}
         />
 
-        <main className="flex-1 overflow-y-auto">
-          {activeTab === 'dashboard' && (
-            <Dashboard 
-              members={members}
-              attendance={attendance}
-              posSales={posData.sales || []}
-              subscriptions={subscriptions}
-              onOpenCheckIn={() => setIsCheckInOpen(true)}
-              onOpenAddMember={handleOpenAddMember}
-            />
-          )}
+        <main className="flex-1 overflow-y-auto p-2 sm:p-4 lg:p-6">
+          <Suspense fallback={
+            <div className="flex items-center justify-center min-h-[60vh]">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
+                <p className="text-xs text-slate-400 font-semibold tracking-wide">Yuklanmoqda...</p>
+              </div>
+            </div>
+          }>
+            {activeTab === 'dashboard' && (
+              <Dashboard 
+                members={members}
+                attendance={attendance}
+                posSales={posData.sales || []}
+                subscriptions={subscriptions}
+                onOpenCheckIn={() => setIsCheckInOpen(true)}
+                onOpenAddMember={handleOpenAddMember}
+              />
+            )}
 
-          {activeTab === 'members' && (
-            <Members 
-              members={members}
-              subscriptions={subscriptions}
-              onRefresh={fetchAllData}
-              onOpenAddMember={handleOpenAddMember}
-              onEditMember={handleOpenEditMember}
-              showToast={showToast}
-            />
-          )}
+            {activeTab === 'members' && (
+              <Members 
+                members={members}
+                subscriptions={subscriptions}
+                onRefresh={fetchAllData}
+                onOpenAddMember={handleOpenAddMember}
+                onEditMember={handleOpenEditMember}
+                showToast={showToast}
+              />
+            )}
 
-          {activeTab === 'attendance' && (
-            <Attendance 
-              attendance={attendance}
-              lockers={lockers}
-              onRefresh={fetchAllData}
-              onOpenCheckIn={() => setIsCheckInOpen(true)}
-              showToast={showToast}
-            />
-          )}
+            {activeTab === 'attendance' && (
+              <Attendance 
+                attendance={attendance}
+                lockers={lockers}
+                onRefresh={fetchAllData}
+                onOpenCheckIn={() => setIsCheckInOpen(true)}
+                showToast={showToast}
+              />
+            )}
 
-          {activeTab === 'pos' && (
-            <PosBar 
-              posData={posData}
-              members={members}
-              attendance={attendance}
-              onRefresh={fetchAllData}
-              showToast={showToast}
-            />
-          )}
+            {activeTab === 'pos' && (
+              <PosBar 
+                posData={posData}
+                members={members}
+                attendance={attendance}
+                onRefresh={fetchAllData}
+                showToast={showToast}
+              />
+            )}
 
-          {activeTab === 'subscriptions' && (
-            <Subscriptions 
-              subscriptions={subscriptions}
-              onRefresh={fetchAllData}
-              showToast={showToast}
-            />
-          )}
+            {activeTab === 'subscriptions' && (
+              <Subscriptions 
+                subscriptions={subscriptions}
+                onRefresh={fetchAllData}
+                showToast={showToast}
+              />
+            )}
 
-          {activeTab === 'finance' && (
-            <Finance 
-              members={members}
-              posSales={posData.sales || []}
-              expenses={expenses}
-              subscriptions={subscriptions}
-            />
-          )}
+            {activeTab === 'finance' && (
+              <Finance 
+                members={members}
+                posSales={posData.sales || []}
+                expenses={expenses}
+                subscriptions={subscriptions}
+              />
+            )}
 
-          {activeTab === 'expenses' && (
-            <Expenses 
-              expenses={expenses}
-              onRefresh={fetchAllData}
-              showToast={showToast}
-            />
-          )}
+            {activeTab === 'expenses' && (
+              <Expenses 
+                expenses={expenses}
+                onRefresh={fetchAllData}
+                showToast={showToast}
+              />
+            )}
 
-          {activeTab === 'settings' && (
-            <Settings 
-              settings={settings}
-              onRefresh={fetchAllData}
-              showToast={showToast}
-            />
-          )}
+            {activeTab === 'settings' && (
+              <Settings 
+                settings={settings}
+                onRefresh={fetchAllData}
+                showToast={showToast}
+              />
+            )}
+          </Suspense>
         </main>
       </div>
 

@@ -40,11 +40,24 @@ const initialData = {
   trainers: []
 };
 
+// ==========================================
+// IN-MEMORY CACHE — har safar diskdan o'qimasdan, 
+// xotiradagi nusxani qaytaradi. Faqat saqlashda diskga yozadi.
+// Bu race condition muammosini to'liq hal qiladi.
+// ==========================================
+const cache = {};
+
 function getFilePath(key) {
   return path.join(DATA_DIR, `${key}.json`);
 }
 
 function loadCollection(key) {
+  // Agar cache'da bo'lsa, DOIM cache'dan qaytarish
+  // Bu race condition'ni oldini oladi — barcha route'lar bitta nusxani ko'radi
+  if (cache[key] !== undefined) {
+    return cache[key];
+  }
+
   const filePath = getFilePath(key);
   const backupPath = `${filePath}.bak`;
 
@@ -54,18 +67,23 @@ function loadCollection(key) {
         const rawBak = fs.readFileSync(backupPath, 'utf-8');
         const parsedBak = JSON.parse(rawBak);
         fs.writeFileSync(filePath, rawBak, 'utf-8');
-        return parsedBak;
+        cache[key] = parsedBak;
+        return cache[key];
       } catch (e) {}
     }
     const defaultVal = initialData[key] || [];
-    fs.writeFileSync(filePath, JSON.stringify(defaultVal, null, 2), 'utf-8');
-    return defaultVal;
+    // Deep clone to prevent mutation of defaults
+    const clonedDefault = JSON.parse(JSON.stringify(defaultVal));
+    fs.writeFileSync(filePath, JSON.stringify(clonedDefault, null, 2), 'utf-8');
+    cache[key] = clonedDefault;
+    return cache[key];
   }
 
   try {
     const raw = fs.readFileSync(filePath, 'utf-8');
     if (!raw.trim()) throw new Error("Empty JSON file content");
-    return JSON.parse(raw);
+    cache[key] = JSON.parse(raw);
+    return cache[key];
   } catch (err) {
     console.error(`Error loading ${key}, attempting backup recovery:`, err.message);
     if (fs.existsSync(backupPath)) {
@@ -74,16 +92,22 @@ function loadCollection(key) {
         const parsedBak = JSON.parse(rawBak);
         fs.writeFileSync(filePath, rawBak, 'utf-8');
         console.log(`✅ ${key} ma'lumotlari zaxira faylidan tiklandi!`);
-        return parsedBak;
+        cache[key] = parsedBak;
+        return cache[key];
       } catch (bakErr) {
         console.error(`Backup recovery failed for ${key}:`, bakErr.message);
       }
     }
-    return initialData[key] || [];
+    const fallback = JSON.parse(JSON.stringify(initialData[key] || []));
+    cache[key] = fallback;
+    return cache[key];
   }
 }
 
 function saveCollection(key, data) {
+  // AVVAL cache'ni yangilash — boshqa route'lar darhol yangi ma'lumotni ko'radi
+  cache[key] = data;
+
   const filePath = getFilePath(key);
   const tempPath = `${filePath}.tmp`;
   const backupPath = `${filePath}.bak`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserCheck, Plus, Dumbbell, Sun, Moon, Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { UserCheck, Plus, Dumbbell, Sun, Moon, Menu, PanelLeftClose, PanelLeftOpen, Wifi, WifiOff, RefreshCw } from 'lucide-react';
 
 export default function Navbar({ 
   onOpenCheckIn, 
@@ -8,7 +8,11 @@ export default function Navbar({
   theme, 
   onToggleTheme,
   onToggleMenu,
-  isSidebarCollapsed
+  isSidebarCollapsed,
+  isConnected = true,
+  isWakingUp = false,
+  isRetrying = false,
+  onRetry
 }) {
   const currentDate = new Date().toLocaleDateString('uz-UZ', { 
     weekday: 'short', 
@@ -43,6 +47,51 @@ export default function Navbar({
       {/* Right: Action Buttons, Theme Switcher & Status */}
       <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         
+        {/* Server Status Badge Indicator */}
+        <button
+          onClick={onRetry}
+          disabled={isRetrying}
+          title={
+            isWakingUp 
+              ? "Render serveri uyg'onmoqda..." 
+              : isConnected 
+                ? "Server Online (Qayta yuklash uchun bosing)" 
+                : "Server Offline! Qayta ulanish uchun bosing"
+          }
+          className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border text-xs font-semibold transition shrink-0 ${
+            isWakingUp 
+              ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 animate-pulse hover:bg-amber-500/20' 
+              : isConnected 
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20' 
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20 animate-bounce'
+          }`}
+        >
+          {isWakingUp ? (
+            <>
+              <RefreshCw className="w-3.5 h-3.5 text-amber-400 animate-spin shrink-0" />
+              <span className="hidden xl:inline text-[11px]">Server Uyg'onmoqda...</span>
+            </>
+          ) : isConnected ? (
+            <>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <Wifi className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="hidden xl:inline text-[11px]">Server Online</span>
+            </>
+          ) : (
+            <>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              </span>
+              <WifiOff className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+              <span className="hidden xl:inline text-[11px]">Server Offline</span>
+            </>
+          )}
+        </button>
+
         {/* Dark / Light Theme Toggle Button */}
         <button
           onClick={onToggleTheme}
@@ -92,3 +141,4 @@ export default function Navbar({
     </header>
   );
 }
+

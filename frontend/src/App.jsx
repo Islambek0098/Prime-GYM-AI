@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { API_BASE_URL } from './config';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import ServerStatusBanner from './components/ServerStatusBanner';
 import CheckInModal from './components/CheckInModal';
 import MemberModal from './components/MemberModal';
 import Toast from './components/Toast';
@@ -38,6 +39,12 @@ export default function App() {
   const [expenses, setExpenses] = useState([]);
   const [settings, setSettings] = useState({});
 
+  // Server Connection & Cold-start (Render.com) states
+  const [isConnected, setIsConnected] = useState(true);
+  const [isWakingUp, setIsWakingUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRetrying, setIsRetrying] = useState(false);
+
   // Modals state
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
@@ -50,7 +57,14 @@ export default function App() {
     setToast({ message, type });
   };
 
-  const fetchAllData = async () => {
+  const fetchAllData = async (isManualRetry = false) => {
+    if (isManualRetry) setIsRetrying(true);
+
+    // Render.com cold start timer: if response > 2.5s, mark as waking up
+    const wakingUpTimer = setTimeout(() => {
+      setIsWakingUp(true);
+    }, 2500);
+
     try {
       const [memRes, subRes, attRes, posRes, setRes, expRes] = await Promise.all([
         fetch(`${API_BASE_URL}/api/members`).then(r => r.json()),
@@ -61,6 +75,7 @@ export default function App() {
         fetch(`${API_BASE_URL}/api/expenses`).then(r => r.json()).catch(() => [])
       ]);
 
+      clearTimeout(wakingUpTimer);
       setMembers(memRes || []);
       setSubscriptions(subRes || []);
       setAttendance(attRes.attendance || []);
@@ -68,8 +83,18 @@ export default function App() {
       setPosData(posRes || { products: [], sales: [] });
       setSettings(setRes || {});
       setExpenses(expRes || []);
+
+      setIsConnected(true);
+      setIsWakingUp(false);
+      setIsLoading(false);
+      setIsRetrying(false);
     } catch (err) {
+      clearTimeout(wakingUpTimer);
       console.error("Error fetching data from API:", err);
+      setIsConnected(false);
+      setIsWakingUp(false);
+      setIsLoading(false);
+      setIsRetrying(false);
     }
   };
 
@@ -147,6 +172,18 @@ export default function App() {
           onToggleTheme={toggleTheme}
           onToggleMenu={handleToggleMenu}
           isSidebarCollapsed={isSidebarCollapsed}
+          isConnected={isConnected}
+          isWakingUp={isWakingUp}
+          isRetrying={isRetrying}
+          onRetry={() => fetchAllData(true)}
+        />
+
+        {/* Server Offline / Waking Up Top Banner */}
+        <ServerStatusBanner 
+          isConnected={isConnected}
+          isWakingUp={isWakingUp}
+          isRetrying={isRetrying}
+          onRetry={() => fetchAllData(true)}
         />
 
         <main className="flex-1 overflow-y-auto p-2 sm:p-4 lg:p-6">
@@ -166,6 +203,9 @@ export default function App() {
                 subscriptions={subscriptions}
                 onOpenCheckIn={() => setIsCheckInOpen(true)}
                 onOpenAddMember={handleOpenAddMember}
+                isLoading={isLoading || isWakingUp}
+                isConnected={isConnected}
+                onRetry={() => fetchAllData(true)}
               />
             )}
 

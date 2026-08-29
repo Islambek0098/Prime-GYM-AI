@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
-export default function Dashboard({ members, attendance, posSales, subscriptions, onOpenCheckIn, onOpenAddMember }) {
+export default function Dashboard({ members, attendance, posSales, subscriptions, onOpenCheckIn, onOpenAddMember, isLoading = false, isConnected = true, onRetry }) {
   const [showPosModal, setShowPosModal] = useState(false);
   const [posPeriod, setPosPeriod] = useState('today'); // 'today' | 'week' | 'month' | 'custom'
   const [posCustomDate, setPosCustomDate] = useState(new Date().toISOString().split('T')[0]);
@@ -99,34 +99,35 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
     dayDate.setDate(today.getDate() - mondayOffset + dayIdx);
     const dateStr = dayDate.toISOString().split('T')[0];
 
-    const daySub = allPayments
-      .filter(p => p.date && p.date.startsWith(dateStr))
+    // Total payments on this day
+    const daySubRev = allPayments
+      .filter(p => p.date && p.date.split('T')[0] === dateStr)
       .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
 
-    const dayPos = posSales
-      .filter(s => s.date && s.date.startsWith(dateStr))
+    const dayPosRev = posSales
+      .filter(s => s.date && s.date.split('T')[0] === dateStr)
       .reduce((sum, s) => sum + (Number(s.totalAmount) || 0), 0);
 
     return {
       name: dayName,
-      subs: daySub,
-      pos: dayPos
+      subRevenue: daySubRev,
+      posRevenue: dayPosRev,
+      total: daySubRev + dayPosRev
     };
   });
 
-  // Filter helper functions for date ranges & custom dates
-  const isWithinPeriod = (dateIso, period, customDateStr) => {
-    if (!dateIso) return false;
-    const itemDate = new Date(dateIso);
+  // Period filter helper for modals
+  const isWithinPeriod = (dateStr, period, customDateStr) => {
+    if (!dateStr) return false;
+    const itemDate = new Date(dateStr);
     const now = new Date();
-
+    
     if (period === 'today') {
-      return itemDate.toDateString() === now.toDateString();
+      return itemDate.toISOString().split('T')[0] === now.toISOString().split('T')[0];
     }
     if (period === 'week') {
-      const diffTime = Math.abs(now - itemDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return diffDays <= 7;
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return itemDate >= sevenDaysAgo && itemDate <= now;
     }
     if (period === 'month') {
       return itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
@@ -211,9 +212,13 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-extrabold text-white tracking-tight group-hover:text-emerald-300 transition">
-              {grandTotalRevenue.toLocaleString()} <span className="text-xs text-slate-400 font-medium">SO'M</span>
-            </h3>
+            {isLoading ? (
+              <div className="h-8 w-36 bg-slate-700/50 rounded-lg animate-pulse my-1"></div>
+            ) : (
+              <h3 className="text-2xl font-extrabold text-white tracking-tight group-hover:text-emerald-300 transition">
+                {grandTotalRevenue.toLocaleString()} <span className="text-xs text-slate-400 font-medium">SO'M</span>
+              </h3>
+            )}
             <p className="text-xs text-emerald-400 font-semibold mt-1 flex items-center gap-1">
               <TrendingUp className="w-3.5 h-3.5" />
               <span>Batafsil tahlilni ko'rish (Bosing)</span>
@@ -230,11 +235,15 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-extrabold text-white tracking-tight">
-              {activeMembers.length} <span className="text-xs text-slate-400 font-medium">/ {totalMembersCount} kishi</span>
-            </h3>
+            {isLoading ? (
+              <div className="h-8 w-24 bg-slate-700/50 rounded-lg animate-pulse my-1"></div>
+            ) : (
+              <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                {activeMembers.length} <span className="text-xs text-slate-400 font-medium">/ {totalMembersCount} kishi</span>
+              </h3>
+            )}
             <p className="text-xs text-cyan-400 font-semibold mt-1">
-              {expiredMembers.length} ta Obunasi tugagan
+              {isLoading ? '...' : `${expiredMembers.length} ta Obunasi tugagan`}
             </p>
           </div>
         </div>
@@ -248,9 +257,13 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-extrabold text-white tracking-tight">
-              {activeVisitors.length} <span className="text-xs text-slate-400 font-medium">kishi</span>
-            </h3>
+            {isLoading ? (
+              <div className="h-8 w-20 bg-slate-700/50 rounded-lg animate-pulse my-1"></div>
+            ) : (
+              <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                {activeVisitors.length} <span className="text-xs text-slate-400 font-medium">kishi</span>
+              </h3>
+            )}
             <p className="text-xs text-purple-400 font-semibold mt-1">
               Shkaflar bandligi aktiv
             </p>
@@ -271,11 +284,15 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-extrabold text-white tracking-tight group-hover:text-amber-300 transition">
-              {totalPosRevenue.toLocaleString()} <span className="text-xs text-slate-400 font-medium">SWM</span>
-            </h3>
+            {isLoading ? (
+              <div className="h-8 w-28 bg-slate-700/50 rounded-lg animate-pulse my-1"></div>
+            ) : (
+              <h3 className="text-2xl font-extrabold text-white tracking-tight group-hover:text-amber-300 transition">
+                {totalPosRevenue.toLocaleString()} <span className="text-xs text-slate-400 font-medium">SO'M</span>
+              </h3>
+            )}
             <p className="text-xs text-amber-400 font-semibold mt-1">
-              {posSales.length} ta sotuv tranzaksiyasi (Bosing)
+              {isLoading ? '...' : `${posSales.length} ta sotuv tranzaksiyasi (Bosing)`}
             </p>
           </div>
         </div>

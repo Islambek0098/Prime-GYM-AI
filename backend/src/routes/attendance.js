@@ -104,6 +104,7 @@ router.post('/checkin', async (req, res) => {
   // Assign locker
   let assignedLocker = lockerNumber;
   const genderKey = member.gender === 'Ayol' ? 'female' : 'male';
+  const oppositeGenderKey = genderKey === 'male' ? 'female' : 'male';
   
   if (!assignedLocker) {
     const freeLocker = lockers[genderKey].find(l => l.status === 'Free');
@@ -113,6 +114,14 @@ router.post('/checkin', async (req, res) => {
       freeLocker.assignedTo = member.fullName;
     }
   } else {
+    // Tekshirish: tanlangan shkaf mijozning jinsiga mos kelishini
+    const wrongGenderLocker = lockers[oppositeGenderKey]?.find(l => l.number === assignedLocker);
+    if (wrongGenderLocker) {
+      return res.status(400).json({ 
+        error: `Xatolik! "${assignedLocker}" shkafi ${member.gender === 'Ayol' ? 'ERKAKLAR' : 'AYOLLAR'}ga tegishli. ${member.fullName} (${member.gender}) uchun ${member.gender === 'Ayol' ? 'Ayollar (F-)' : 'Erkaklar (M-)'} shkafini tanlang.`,
+        member 
+      });
+    }
     const targetLocker = lockers[genderKey].find(l => l.number === assignedLocker);
     if (targetLocker) {
       targetLocker.status = 'Occupied';

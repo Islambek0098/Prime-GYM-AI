@@ -24,7 +24,7 @@ router.get('/churn-risk', (req, res) => {
   }).map(m => {
     const memberAtt = attendance.filter(a => a.memberId === m.id || a.phone === m.phone);
     const lastAtt = memberAtt.length > 0 ? memberAtt[0].checkInTime : null;
-    let riskLevel = 'O'rtacha';
+    let riskLevel = "O'rtacha";
     let riskReason = "7 kundan beri kelmagan";
 
     if (m.remainingVisits <= 1 && m.endDate <= todayStr) {

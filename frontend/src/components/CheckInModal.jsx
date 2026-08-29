@@ -13,6 +13,7 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showLockerSuggestions, setShowLockerSuggestions] = useState(false);
   const [selectedGender, setSelectedGender] = useState('Erkak');
+  const [isGenderLocked, setIsGenderLocked] = useState(false);
 
   // Check which members are currently checked-in ("Zalda")
   const zaldaRecords = (attendance || []).filter(a => a.status === 'Zalda');
@@ -97,6 +98,8 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
     setLockerNumber('');
     setError('');
     setSuccessResult(null);
+    setIsGenderLocked(false);
+    setSelectedGender('Erkak');
   };
 
   return (
@@ -193,10 +196,14 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                       const matched = members?.find(m => 
                         m.fullName.toLowerCase() === qClean || 
                         m.id.toLowerCase() === qClean || 
-                        (m.phone && m.phone.replace(/\s+/g, '') === qClean.replace(/\s+/g, ''))
-                      );
+                        (m.phone && m.phone.replace(/\s+/g, '') === qClean.replace(/\s+/g, '')));
                       if (matched && matched.gender) {
                         setSelectedGender(matched.gender);
+                        setIsGenderLocked(true);
+                        setLockerNumber('');
+                        setShowLockerSuggestions(false);
+                      } else {
+                        setIsGenderLocked(false);
                       }
                     }}
                     onFocus={() => setShowSuggestions(true)}
@@ -214,7 +221,12 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                           key={m.id}
                           onClick={() => {
                             setQuery(m.fullName);
-                            if (m.gender) setSelectedGender(m.gender);
+                            if (m.gender) {
+                              setSelectedGender(m.gender);
+                              setIsGenderLocked(true);
+                              setLockerNumber('');
+                              setShowLockerSuggestions(false);
+                            }
                             setShowSuggestions(false);
                           }}
                           className="p-3 hover:bg-slate-800/80 cursor-pointer transition flex items-center justify-between text-xs"
@@ -258,29 +270,36 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setSelectedGender('Erkak')}
+                    disabled={isGenderLocked}
+                    onClick={() => { if (!isGenderLocked) setSelectedGender('Erkak'); }}
                     className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border ${
                       selectedGender === 'Erkak' 
                         ? 'bg-blue-500/20 text-blue-400 border-blue-500/40 shadow-md shadow-blue-500/10' 
                         : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
-                    }`}
+                    } ${isGenderLocked ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
                     <span>👨 Erkaklar</span>
                     <span className="text-[10px] opacity-75">({maleFree.length} bo'sh)</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSelectedGender('Ayol')}
+                    disabled={isGenderLocked}
+                    onClick={() => { if (!isGenderLocked) setSelectedGender('Ayol'); }}
                     className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border ${
                       selectedGender === 'Ayol' 
                         ? 'bg-pink-500/20 text-pink-400 border-pink-500/40 shadow-md shadow-pink-500/10' 
                         : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
-                    }`}
+                    } ${isGenderLocked ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
                     <span>👩 Ayollar</span>
                     <span className="text-[10px] opacity-75">({femaleFree.length} bo'sh)</span>
                   </button>
                 </div>
+                {isGenderLocked && (
+                  <p className="text-[10px] text-cyan-400 mt-1 flex items-center gap-1">
+                    🔒 Mijoz jinsi bo'yicha avtomatik tanlandi
+                  </p>
+                )}
               </div>
 
               <div>

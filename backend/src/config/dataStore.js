@@ -36,7 +36,8 @@ const initialData = {
   },
   posProducts: [],
   posSales: [],
-  expenses: []
+  expenses: [],
+  trainers: []
 };
 
 function getFilePath(key) {

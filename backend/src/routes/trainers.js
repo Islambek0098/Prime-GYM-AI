@@ -10,27 +10,32 @@ router.get('/', (req, res) => {
 
 // Add new trainer
 router.post('/', (req, res) => {
-  const { fullName, phone, specialty, commissionRate } = req.body;
+  try {
+    const { fullName, phone, specialty, commissionRate } = req.body;
 
-  if (!fullName) {
-    return res.status(400).json({ error: "Murabbiy ismi kiritilishi shart" });
+    if (!fullName) {
+      return res.status(400).json({ error: "Murabbiy ismi kiritilishi shart" });
+    }
+
+    const trainers = loadCollection('trainers');
+    const newTrainer = {
+      id: `tr_${Date.now()}`,
+      fullName,
+      phone: phone || '',
+      specialty: specialty || 'Fitnes murabbiyi',
+      commissionRate: Number(commissionRate) || 30,
+      assignedMembers: [],
+      createdDate: new Date().toISOString().split('T')[0]
+    };
+
+    trainers.unshift(newTrainer);
+    saveCollection('trainers', trainers);
+
+    res.status(201).json({ success: true, trainer: newTrainer });
+  } catch (err) {
+    console.error("Murabbiy qo'shishda xatolik:", err);
+    res.status(500).json({ error: "Murabbiy qo'shishda server xatoligi yuz berdi" });
   }
-
-  const trainers = loadCollection('trainers');
-  const newTrainer = {
-    id: `tr_${Date.now()}`,
-    fullName,
-    phone: phone || '',
-    specialty: specialty || 'Fitnes murabbiyi',
-    commissionRate: Number(commissionRate) || 30,
-    assignedMembers: [],
-    createdDate: new Date().toISOString().split('T')[0]
-  };
-
-  trainers.unshift(newTrainer);
-  saveCollection('trainers', trainers);
-
-  res.status(201).json({ success: true, trainer: newTrainer });
 });
 
 // Update trainer

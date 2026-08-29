@@ -36,11 +36,22 @@ export default function Trainers({ members, showToast }) {
   const [assignSessions, setAssignSessions] = useState('10');
 
   const parseJsonResponse = async (res) => {
-    const contentType = res.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      return await res.json();
+    try {
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await res.json();
+      }
+      // Ba'zi hollarda content-type bo'lmasligi mumkin, JSON parse qilib ko'ramiz
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        throw new Error(`Server javob bermadi (Status ${res.status}). Iltimos, backend server (node server.js) qayta ishga tushirilganini tekshiring.`);
+      }
+    } catch (err) {
+      if (err.message.includes('Server javob bermadi')) throw err;
+      throw new Error(`Server bilan bog'lanishda xatolik: ${err.message}`);
     }
-    throw new Error(`Server javob bermadi (Status ${res.status}). Iltimos, backend server (node server.js) qayta ishga tushirilganini tekshiring.`);
   };
 
   const fetchTrainers = async () => {

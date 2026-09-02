@@ -1,13 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+const { pool, createTables } = require('./db');
 
-const DATA_DIR = path.join(__dirname, '../../data');
+const cache = {};
 
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-
-// Initial default data for GYM
 const initialData = {
   settings: {
     gymName: "CHAMPION GYM & FITNESS",
@@ -28,114 +22,64 @@ const initialData = {
     { id: "sub_4", name: "Kunlik Kirish (1 Marta)", durationDays: 1, price: 30000, visitsCount: 1, description: "Bir martalik mashg'ulot uchun" },
     { id: "sub_5", name: "Yillik Cheksiz (1 Yil)", durationDays: 365, price: 2800000, visitsCount: 999, description: "1 yil davomida VIP imtiyozlar" }
   ],
-  members: [],
-  attendance: [],
+  members:     [],
+  attendance:  [],
   lockers: {
-    male: Array.from({ length: 30 }, (_, i) => ({ number: `M-${i + 1}`, status: "Free", assignedTo: null })),
+    male:   Array.from({ length: 30 }, (_, i) => ({ number: `M-${i + 1}`, status: "Free", assignedTo: null })),
     female: Array.from({ length: 20 }, (_, i) => ({ number: `F-${i + 1}`, status: "Free", assignedTo: null }))
   },
   posProducts: [],
-  posSales: [],
-  expenses: [],
-  trainers: []
+  posSales:    [],
+  expenses:    [],
+  trainers:    []
 };
 
-// ==========================================
-// IN-MEMORY CACHE — har safar diskdan o'qimasdan, 
-// xotiradagi nusxani qaytaradi. Faqat saqlashda diskga yozadi.
-// Bu race condition muammosini to'liq hal qiladi.
-// ==========================================
-const cache = {};
+async function initDataStore() {
+  await createTables();
 
-function getFilePath(key) {
-  return path.join(DATA_DIR, `${key}.json`);
+  const result = await pool.query('SELECT key, data FROM gym_data');
+  result.rows.forEach(row => {
+    cache[row.key] = row.data;
+  });
+
+  const insertPromises = Object.entries(initialData)
+    .filter(([key]) => cache[key] === undefined)
+    .map(async ([key, value]) => {
+      const defaultVal = JSON.parse(JSON.stringify(value));
+      await pool.query(
+        `INSERT INTO gym_data (key, data) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING`,
+        [key, JSON.stringify(defaultVal)]
+      );
+      cache[key] = defaultVal;
+    });
+
+  await Promise.all(insertPromises);
+  console.log(`✅ DataStore tayyor. Kolleksiyalar: ${Object.keys(cache).join(', ')}`);
 }
 
 function loadCollection(key) {
-  // Agar cache'da bo'lsa, DOIM cache'dan qaytarish
-  // Bu race condition'ni oldini oladi — barcha route'lar bitta nusxani ko'radi
-  if (cache[key] !== undefined) {
-    return cache[key];
-  }
-
-  const filePath = getFilePath(key);
-  const backupPath = `${filePath}.bak`;
-
-  if (!fs.existsSync(filePath)) {
-    if (fs.existsSync(backupPath)) {
-      try {
-        const rawBak = fs.readFileSync(backupPath, 'utf-8');
-        const parsedBak = JSON.parse(rawBak);
-        fs.writeFileSync(filePath, rawBak, 'utf-8');
-        cache[key] = parsedBak;
-        return cache[key];
-      } catch (e) {}
-    }
-    const defaultVal = initialData[key] || [];
-    // Deep clone to prevent mutation of defaults
-    const clonedDefault = JSON.parse(JSON.stringify(defaultVal));
-    fs.writeFileSync(filePath, JSON.stringify(clonedDefault, null, 2), 'utf-8');
-    cache[key] = clonedDefault;
-    return cache[key];
-  }
-
-  try {
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    if (!raw.trim()) throw new Error("Empty JSON file content");
-    cache[key] = JSON.parse(raw);
-    return cache[key];
-  } catch (err) {
-    console.error(`Error loading ${key}, attempting backup recovery:`, err.message);
-    if (fs.existsSync(backupPath)) {
-      try {
-        const rawBak = fs.readFileSync(backupPath, 'utf-8');
-        const parsedBak = JSON.parse(rawBak);
-        fs.writeFileSync(filePath, rawBak, 'utf-8');
-        console.log(`✅ ${key} ma'lumotlari zaxira faylidan tiklandi!`);
-        cache[key] = parsedBak;
-        return cache[key];
-      } catch (bakErr) {
-        console.error(`Backup recovery failed for ${key}:`, bakErr.message);
-      }
-    }
-    const fallback = JSON.parse(JSON.stringify(initialData[key] || []));
-    cache[key] = fallback;
-    return cache[key];
-  }
+  if (cache[key] !== undefined) return cache[key];
+  const fallback = JSON.parse(JSON.stringify(initialData[key] || []));
+  cache[key] = fallback;
+  console.warn(`⚠️  '${key}' cache da topilmadi, default ishlatildi.`);
+  return cache[key];
 }
 
 function saveCollection(key, data) {
-  // AVVAL cache'ni yangilash — boshqa route'lar darhol yangi ma'lumotni ko'radi
   cache[key] = data;
-
-  const filePath = getFilePath(key);
-  const tempPath = `${filePath}.tmp`;
-  const backupPath = `${filePath}.bak`;
-
-  try {
-    // 1. Write to temporary file
-    fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
-
-    // 2. Backup current valid file if exists
-    if (fs.existsSync(filePath)) {
-      try {
-        fs.copyFileSync(filePath, backupPath);
-      } catch (e) {}
-    }
-
-    // 3. Atomically rename temp file to main file
-    fs.renameSync(tempPath, filePath);
-  } catch (err) {
-    console.error(`Error saving ${key}:`, err.message);
-    try {
-      fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-    } catch (directErr) {
-      console.error(`Direct write failed for ${key}:`, directErr.message);
-    }
-  }
+  pool.query(
+    `INSERT INTO gym_data (key, data, updated_at)
+     VALUES ($1, $2, NOW())
+     ON CONFLICT (key)
+     DO UPDATE SET data = $2, updated_at = NOW()`,
+    [key, JSON.stringify(data)]
+  ).catch(err => {
+    console.error(`❌ DB save xatosi [${key}]:`, err.message);
+  });
 }
 
-module.exports = {
-  loadCollection,
-  saveCollection
-};
+function getAllCacheKeys() {
+  return Object.keys(cache);
+}
+
+module.exports = { loadCollection, saveCollection, initDataStore, getAllCacheKeys };

@@ -1,7 +1,7 @@
 {
   "name": "gym-management-backend",
   "version": "1.0.0",
-  "description": "GYM Admin Panel Backend with Google Sheets & Telegram Integration",
+  "description": "GYM Admin Panel Backend — PostgreSQL (Supabase) + Google Sheets + Telegram",
   "main": "src/server.js",
   "type": "commonjs",
   "scripts": {
@@ -14,6 +14,7 @@
     "express": "^4.19.2",
     "google-spreadsheet": "^4.1.4",
     "googleapis": "^140.0.0",
-    "node-telegram-bot-api": "^0.66.0"
+    "node-telegram-bot-api": "^0.66.0",
+    "pg": "^8.13.3"
   }
 }

@@ -59,10 +59,11 @@ async function loadCollection(key) {
     if (result.rows.length > 0) {
       return result.rows[0].data;
     }
+    return JSON.parse(JSON.stringify(initialData[key] || []));
   } catch (err) {
     console.error(`❌ DB load xatosi [${key}]:`, err.message);
+    throw new Error(`Ma'lumotlarni o'qishda xatolik: ${err.message}`);
   }
-  return JSON.parse(JSON.stringify(initialData[key] || []));
 }
 
 async function saveCollection(key, data) {
@@ -76,6 +77,7 @@ async function saveCollection(key, data) {
     );
   } catch (err) {
     console.error(`❌ DB save xatosi [${key}]:`, err.message);
+    throw new Error(`Ma'lumotlarni saqlashda xatolik: ${err.message}`);
   }
 }
 

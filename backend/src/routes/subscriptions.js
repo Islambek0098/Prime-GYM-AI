@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { loadCollection, saveCollection } = require('../config/dataStore');
 
-router.get('/', (req, res) => {
-  const subs = loadCollection('subscriptions');
+router.get('/', async (req, res) => {
+  const subs = await loadCollection('subscriptions');
   res.json(subs);
 });
 
-router.post('/', (req, res) => {
-  const subs = loadCollection('subscriptions');
+router.post('/', async (req, res) => {
+  const subs = await loadCollection('subscriptions');
   const { name, durationDays, price, visitsCount, description } = req.body;
 
   const newSub = {
@@ -21,26 +21,26 @@ router.post('/', (req, res) => {
   };
 
   subs.push(newSub);
-  saveCollection('subscriptions', subs);
+  await saveCollection('subscriptions', subs);
 
   res.status(201).json(newSub);
 });
 
-router.put('/:id', (req, res) => {
-  let subs = loadCollection('subscriptions');
+router.put('/:id', async (req, res) => {
+  let subs = await loadCollection('subscriptions');
   const idx = subs.findIndex(s => s.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Tarif topilmadi" });
 
   subs[idx] = { ...subs[idx], ...req.body };
-  saveCollection('subscriptions', subs);
+  await saveCollection('subscriptions', subs);
 
   res.json(subs[idx]);
 });
 
-router.delete('/:id', (req, res) => {
-  let subs = loadCollection('subscriptions');
+router.delete('/:id', async (req, res) => {
+  let subs = await loadCollection('subscriptions');
   subs = subs.filter(s => s.id !== req.params.id);
-  saveCollection('subscriptions', subs);
+  await saveCollection('subscriptions', subs);
 
   res.json({ success: true, id: req.params.id });
 });

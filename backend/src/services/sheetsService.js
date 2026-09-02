@@ -36,8 +36,8 @@ function formatPhoneForCSV(phone) {
   return `="${str}"`;
 }
 
-function exportToCSV(collectionName) {
-  const data = loadCollection(collectionName);
+async function exportToCSV(collectionName) {
+  const data = await loadCollection(collectionName);
   
   let columns = [];
   let rowMapper = (item) => [];
@@ -138,13 +138,13 @@ function exportToCSV(collectionName) {
 
 async function syncWithGoogleSheets(rawSheetsId, credentialsJSON) {
   try {
-    const settings = loadCollection('settings');
+    const settings = await loadCollection('settings');
     const cleanId = extractSheetsId(rawSheetsId);
     
     settings.googleSheetsId = cleanId || settings.googleSheetsId;
     if (credentialsJSON) settings.googleCredentialsJSON = credentialsJSON;
     settings.lastSheetsSync = new Date().toISOString();
-    saveCollection('settings', settings);
+    await saveCollection('settings', settings);
 
     if (!cleanId) {
       return {

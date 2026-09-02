@@ -5,20 +5,20 @@ const { sendTelegramMessage, broadcastTelegramMessage } = require('../services/t
 const { syncWithGoogleSheets, exportToCSV, extractSheetsId } = require('../services/sheetsService');
 
 // Get settings
-router.get('/', (req, res) => {
-  const settings = loadCollection('settings');
+router.get('/', async (req, res) => {
+  const settings = await loadCollection('settings');
   res.json(settings);
 });
 
-// Save settings
-router.post('/', (req, res) => {
-  let settings = loadCollection('settings');
+// Update settings
+router.post('/', async (req, res) => {
+  let settings = await loadCollection('settings');
   const updatedData = { ...req.body };
   if (updatedData.googleSheetsId) {
     updatedData.googleSheetsId = extractSheetsId(updatedData.googleSheetsId);
   }
   settings = { ...settings, ...updatedData };
-  saveCollection('settings', settings);
+  await saveCollection('settings', settings);
 
   res.json({ success: true, settings });
 });
@@ -48,9 +48,9 @@ router.post('/sync-sheets', async (req, res) => {
 });
 
 // Export collection CSV download
-router.get('/export-csv/:collection', (req, res) => {
+router.get('/export-csv/:collection', async (req, res) => {
   const collection = req.params.collection;
-  const csv = exportToCSV(collection);
+  const csv = await exportToCSV(collection);
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename=${collection}.csv`);
   res.send(csv);

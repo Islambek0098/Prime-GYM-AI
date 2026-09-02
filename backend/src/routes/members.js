@@ -4,15 +4,15 @@ const { loadCollection, saveCollection } = require('../config/dataStore');
 const { notifyExpiryWarning } = require('../services/telegramService');
 
 // Get all members
-router.get('/', (req, res) => {
-  const members = loadCollection('members');
+router.get('/', async (req, res) => {
+  const members = await loadCollection('members');
   res.json(members);
 });
 
 // Create new member
-router.post('/', (req, res) => {
-  const members = loadCollection('members');
-  const subscriptions = loadCollection('subscriptions');
+router.post('/', async (req, res) => {
+  const members = await loadCollection('members');
+  const subscriptions = await loadCollection('subscriptions');
   
   const { fullName, phone, telegramId, gender, subscriptionId, totalPaid, debt, paymentMethod } = req.body;
   
@@ -53,14 +53,14 @@ router.post('/', (req, res) => {
   };
 
   members.unshift(newMember);
-  saveCollection('members', members);
+  await saveCollection('members', members);
 
   res.status(201).json(newMember);
 });
 
 // Update member or add additional payment / payoff debt
-router.put('/:id', (req, res) => {
-  let members = loadCollection('members');
+router.put('/:id', async (req, res) => {
+  let members = await loadCollection('members');
   const index = members.findIndex(m => m.id === req.params.id);
   if (index === -1) {
     return res.status(404).json({ error: "Mijoz topilmadi" });
@@ -100,23 +100,23 @@ router.put('/:id', (req, res) => {
     paymentHistory: history
   };
 
-  saveCollection('members', members);
+  await saveCollection('members', members);
   res.json(members[index]);
 });
 
 // Delete member
-router.delete('/:id', (req, res) => {
-  let members = loadCollection('members');
+router.delete('/:id', async (req, res) => {
+  let members = await loadCollection('members');
   members = members.filter(m => m.id !== req.params.id);
-  saveCollection('members', members);
+  await saveCollection('members', members);
 
   res.json({ success: true, id: req.params.id });
 });
 
 // Renew / Extend Subscription
-router.post('/:id/renew', (req, res) => {
-  let members = loadCollection('members');
-  const subscriptions = loadCollection('subscriptions');
+router.post('/:id/renew', async (req, res) => {
+  let members = await loadCollection('members');
+  const subscriptions = await loadCollection('subscriptions');
   
   const member = members.find(m => m.id === req.params.id);
   if (!member) return res.status(404).json({ error: "Mijoz topilmadi" });
@@ -148,13 +148,13 @@ router.post('/:id/renew', (req, res) => {
   member.paymentMethod = payMethod;
   member.paymentHistory = history;
 
-  saveCollection('members', members);
+  await saveCollection('members', members);
   res.json(member);
 });
 
 // Send manual telegram notification
 router.post('/:id/notify', async (req, res) => {
-  const members = loadCollection('members');
+  const members = await loadCollection('members');
   const member = members.find(m => m.id === req.params.id);
   if (!member) return res.status(404).json({ error: "Mijoz topilmadi" });
 

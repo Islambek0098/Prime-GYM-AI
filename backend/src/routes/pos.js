@@ -3,15 +3,15 @@ const router = express.Router();
 const { loadCollection, saveCollection } = require('../config/dataStore');
 
 // Get POS products & sales history
-router.get('/', (req, res) => {
-  const products = loadCollection('posProducts');
-  const sales = loadCollection('posSales');
+router.get('/', async (req, res) => {
+  const products = await loadCollection('posProducts');
+  const sales = await loadCollection('posSales');
   res.json({ products, sales });
 });
 
 // Add new product
-router.post('/products', (req, res) => {
-  const products = loadCollection('posProducts');
+router.post('/products', async (req, res) => {
+  const products = await loadCollection('posProducts');
   const { name, category, price, stock, unit } = req.body;
 
   if (!name || !price || stock === undefined || stock === null || stock === '') {
@@ -28,26 +28,26 @@ router.post('/products', (req, res) => {
   };
 
   products.push(newProd);
-  saveCollection('posProducts', products);
+  await saveCollection('posProducts', products);
 
   res.status(201).json(newProd);
 });
 
 // Update product
-router.put('/products/:id', (req, res) => {
-  let products = loadCollection('posProducts');
+router.put('/products/:id', async (req, res) => {
+  let products = await loadCollection('posProducts');
   const idx = products.findIndex(p => p.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Mahsulot topilmadi" });
 
   products[idx] = { ...products[idx], ...req.body };
-  saveCollection('posProducts', products);
+  await saveCollection('posProducts', products);
 
   res.json(products[idx]);
 });
 
 // Delete product
-router.delete('/products/:id', (req, res) => {
-  let products = loadCollection('posProducts');
+router.delete('/products/:id', async (req, res) => {
+  let products = await loadCollection('posProducts');
   const initialLength = products.length;
   products = products.filter(p => p.id !== req.params.id);
 
@@ -55,14 +55,14 @@ router.delete('/products/:id', (req, res) => {
     return res.status(404).json({ error: "Mahsulot topilmadi" });
   }
 
-  saveCollection('posProducts', products);
+  await saveCollection('posProducts', products);
   res.json({ success: true, message: "Mahsulot muvaffaqiyatli o'chirildi", id: req.params.id });
 });
 
 // Record a POS Sale
-router.post('/sell', (req, res) => {
-  let products = loadCollection('posProducts');
-  let sales = loadCollection('posSales');
+router.post('/sell', async (req, res) => {
+  let products = await loadCollection('posProducts');
+  let sales = await loadCollection('posSales');
   const { memberId, memberName, items, paymentMethod } = req.body;
 
   if (!items || !Array.isArray(items) || items.length === 0) {
@@ -71,7 +71,7 @@ router.post('/sell', (req, res) => {
 
   // Verify member is currently in the gym ("Zalda") if memberId is provided
   if (memberId) {
-    const attendance = loadCollection('attendance');
+    const attendance = await loadCollection('attendance');
     const activeRecord = attendance.find(a => a.memberId === memberId && a.status === 'Zalda');
     if (!activeRecord) {
       return res.status(400).json({ error: "Bu mijoz zalda emas" });
@@ -100,8 +100,8 @@ router.post('/sell', (req, res) => {
   };
 
   sales.unshift(newSale);
-  saveCollection('posProducts', products);
-  saveCollection('posSales', sales);
+  await saveCollection('posProducts', products);
+  await saveCollection('posSales', sales);
 
   res.status(201).json({ success: true, sale: newSale });
 });

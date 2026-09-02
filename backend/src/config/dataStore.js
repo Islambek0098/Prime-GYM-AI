@@ -1,6 +1,5 @@
 const { pool, createTables } = require('./db');
 
-const cache = {};
 
 const initialData = {
   settings: {
@@ -37,49 +36,52 @@ const initialData = {
 async function initDataStore() {
   await createTables();
 
-  const result = await pool.query('SELECT key, data FROM gym_data');
-  result.rows.forEach(row => {
-    cache[row.key] = row.data;
-  });
+  const result = await pool.query('SELECT key FROM gym_data');
+  const existingKeys = new Set(result.rows.map(r => r.key));
 
   const insertPromises = Object.entries(initialData)
-    .filter(([key]) => cache[key] === undefined)
+    .filter(([key]) => !existingKeys.has(key))
     .map(async ([key, value]) => {
       const defaultVal = JSON.parse(JSON.stringify(value));
       await pool.query(
         `INSERT INTO gym_data (key, data) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING`,
         [key, JSON.stringify(defaultVal)]
       );
-      cache[key] = defaultVal;
     });
 
   await Promise.all(insertPromises);
-  console.log(`✅ DataStore tayyor. Kolleksiyalar: ${Object.keys(cache).join(', ')}`);
+  console.log(`✅ DataStore tayyor.`);
 }
 
-function loadCollection(key) {
-  if (cache[key] !== undefined) return cache[key];
-  const fallback = JSON.parse(JSON.stringify(initialData[key] || []));
-  cache[key] = fallback;
-  console.warn(`⚠️  '${key}' cache da topilmadi, default ishlatildi.`);
-  return cache[key];
+async function loadCollection(key) {
+  try {
+    const result = await pool.query('SELECT data FROM gym_data WHERE key = $1', [key]);
+    if (result.rows.length > 0) {
+      return result.rows[0].data;
+    }
+  } catch (err) {
+    console.error(`❌ DB load xatosi [${key}]:`, err.message);
+  }
+  return JSON.parse(JSON.stringify(initialData[key] || []));
 }
 
-function saveCollection(key, data) {
-  cache[key] = data;
-  pool.query(
-    `INSERT INTO gym_data (key, data, updated_at)
-     VALUES ($1, $2, NOW())
-     ON CONFLICT (key)
-     DO UPDATE SET data = $2, updated_at = NOW()`,
-    [key, JSON.stringify(data)]
-  ).catch(err => {
+async function saveCollection(key, data) {
+  try {
+    await pool.query(
+      `INSERT INTO gym_data (key, data, updated_at)
+       VALUES ($1, $2, NOW())
+       ON CONFLICT (key)
+       DO UPDATE SET data = $2, updated_at = NOW()`,
+      [key, JSON.stringify(data)]
+    );
+  } catch (err) {
     console.error(`❌ DB save xatosi [${key}]:`, err.message);
-  });
+  }
 }
 
-function getAllCacheKeys() {
-  return Object.keys(cache);
+async function getAllCacheKeys() {
+  const result = await pool.query('SELECT key FROM gym_data');
+  return result.rows.map(r => r.key);
 }
 
 module.exports = { loadCollection, saveCollection, initDataStore, getAllCacheKeys };

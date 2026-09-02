@@ -1,7 +1,7 @@
 const { loadCollection } = require('../config/dataStore');
 
 async function sendTelegramMessage(chatId, text) {
-  const settings = loadCollection('settings');
+  const settings = await loadCollection('settings');
   const token = settings.telegramBotToken;
 
   if (!token) {
@@ -65,7 +65,7 @@ async function sendTelegramMessage(chatId, text) {
 }
 
 async function broadcastTelegramMessage(text) {
-  const members = loadCollection('members');
+  const members = await loadCollection('members');
   const targetMembers = members.filter(m => m.telegramId && m.telegramId.trim() !== '');
 
   if (targetMembers.length === 0) {
@@ -81,7 +81,8 @@ async function broadcastTelegramMessage(text) {
   let failedCount = 0;
 
   for (const member of targetMembers) {
-    const personalizedText = `📢 *${loadCollection('settings').gymName || 'GYM & FITNESS'} E'LONI*\n\nHurmatli *${member.fullName}*!\n\n${text}`;
+    const settings = await loadCollection('settings');
+    const personalizedText = `📢 *${settings.gymName || 'GYM & FITNESS'} E'LONI*\n\nHurmatli *${member.fullName}*!\n\n${text}`;
     const result = await sendTelegramMessage(member.telegramId, personalizedText);
     if (result.success) {
       sentCount++;
@@ -100,7 +101,7 @@ async function broadcastTelegramMessage(text) {
 }
 
 async function notifyCheckIn(member, lockerNumber) {
-  const settings = loadCollection('settings');
+  const settings = await loadCollection('settings');
   if (!settings.autoTelegramCheckIn) return;
 
   const msg = `🏋️‍♂️ *${settings.gymName || 'GYM & FITNESS'}*\n` +
@@ -117,7 +118,7 @@ async function notifyCheckIn(member, lockerNumber) {
 }
 
 async function notifyExpiryWarning(member, daysLeft) {
-  const settings = loadCollection('settings');
+  const settings = await loadCollection('settings');
   if (!settings.autoTelegramExpiryWarning) return;
 
   const msg = `⚠️ *${settings.gymName || 'GYM & FITNESS'}*\n` +
@@ -132,7 +133,7 @@ async function notifyExpiryWarning(member, daysLeft) {
 }
 
 async function checkAndSendExpiringReminders() {
-  const members = loadCollection('members');
+  const members = await loadCollection('members');
   const today = new Date();
   let count = 0;
 

@@ -3,9 +3,9 @@ const router = express.Router();
 const { loadCollection } = require('../config/dataStore');
 
 // GET /api/analytics/churn-risk
-router.get('/churn-risk', (req, res) => {
-  const members = loadCollection('members');
-  const attendance = loadCollection('attendance');
+router.get('/churn-risk', async (req, res) => {
+  const members = await loadCollection('members');
+  const attendance = await loadCollection('attendance');
 
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -55,8 +55,8 @@ router.get('/churn-risk', (req, res) => {
 });
 
 // GET /api/analytics/peak-hours
-router.get('/peak-hours', (req, res) => {
-  const attendance = loadCollection('attendance');
+router.get('/peak-hours', async (req, res) => {
+  const attendance = await loadCollection('attendance');
   
   // Initialize hourly slots from 06:00 to 22:00
   const slots = {
@@ -94,10 +94,10 @@ router.get('/peak-hours', (req, res) => {
 });
 
 // GET /api/analytics/forecast
-router.get('/forecast', (req, res) => {
-  const members = loadCollection('members');
-  const subscriptions = loadCollection('subscriptions');
-  const posSales = loadCollection('posSales') || [];
+router.get('/forecast', async (req, res) => {
+  const members = await loadCollection('members');
+  const subscriptions = await loadCollection('subscriptions');
+  const posSales = await loadCollection('posSales') || [];
 
   const activeMembersCount = members.filter(m => m.status === 'Active').length;
   const avgSubPrice = subscriptions.length > 0 

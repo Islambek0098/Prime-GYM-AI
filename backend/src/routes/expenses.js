@@ -3,14 +3,14 @@ const router = express.Router();
 const { loadCollection, saveCollection } = require('../config/dataStore');
 
 // Get all expenses
-router.get('/', (req, res) => {
-  const expenses = loadCollection('expenses');
+router.get('/', async (req, res) => {
+  const expenses = await loadCollection('expenses');
   res.json(expenses);
 });
 
 // Add new expense
-router.post('/', (req, res) => {
-  const expenses = loadCollection('expenses');
+router.post('/', async (req, res) => {
+  const expenses = await loadCollection('expenses');
   const { title, category, amount, paymentMethod, date, note } = req.body;
 
   if (!title || !amount || Number(amount) <= 0) {
@@ -29,14 +29,14 @@ router.post('/', (req, res) => {
   };
 
   expenses.unshift(newExpense);
-  saveCollection('expenses', expenses);
+  await saveCollection('expenses', expenses);
 
   res.status(201).json(newExpense);
 });
 
 // Delete an expense
-router.delete('/:id', (req, res) => {
-  let expenses = loadCollection('expenses');
+router.delete('/:id', async (req, res) => {
+  let expenses = await loadCollection('expenses');
   const initialLength = expenses.length;
   expenses = expenses.filter(e => e.id !== req.params.id);
 
@@ -44,7 +44,7 @@ router.delete('/:id', (req, res) => {
     return res.status(404).json({ error: "Harajat topilmadi" });
   }
 
-  saveCollection('expenses', expenses);
+  await saveCollection('expenses', expenses);
   res.json({ success: true, id: req.params.id });
 });
 

@@ -3,9 +3,9 @@ const router = express.Router();
 const { loadCollection, saveCollection } = require('../config/dataStore');
 const { notifyCheckIn } = require('../services/telegramService');
 
-function autoCheckoutMidnight() {
-  let attendance = loadCollection('attendance');
-  let lockers = loadCollection('lockers');
+async function autoCheckoutMidnight() {
+  let attendance = await loadCollection('attendance');
+  let lockers = await loadCollection('lockers');
   const today = new Date().toISOString().split('T')[0];
   let modified = false;
 
@@ -33,26 +33,26 @@ function autoCheckoutMidnight() {
   });
 
   if (modified) {
-    saveCollection('attendance', attendance);
-    saveCollection('lockers', lockers);
+    await saveCollection('attendance', attendance);
+    await saveCollection('lockers', lockers);
     console.log('🕒 Avto Check-Out (00:00): Eski kun zaldagilar chiqarildi va shkaflar bo\'shatildi.');
   }
 }
 
 // Get current attendance list & lockers
-router.get('/', (req, res) => {
-  autoCheckoutMidnight();
-  const attendance = loadCollection('attendance');
-  const lockers = loadCollection('lockers');
+router.get('/', async (req, res) => {
+  await autoCheckoutMidnight();
+  const attendance = await loadCollection('attendance');
+  const lockers = await loadCollection('lockers');
   res.json({ attendance, lockers });
 });
 
 // Quick Check-In Member
 router.post('/checkin', async (req, res) => {
   const { query, lockerNumber } = req.body; // query can be memberId or phone or name
-  const members = loadCollection('members');
-  const attendance = loadCollection('attendance');
-  const lockers = loadCollection('lockers');
+  const members = await loadCollection('members');
+  const attendance = await loadCollection('attendance');
+  const lockers = await loadCollection('lockers');
 
   if (!query) {
     return res.status(400).json({ error: "Mijoz ID si yoki Telefon raqami kiritilmadi" });
@@ -157,7 +157,7 @@ router.post('/checkin', async (req, res) => {
 
   // Deduct visit count
   member.remainingVisits = Math.max(0, member.remainingVisits - 1);
-  saveCollection('members', members);
+  await saveCollection('members', members);
 
   // Add attendance record
   const newAttendance = {
@@ -171,8 +171,8 @@ router.post('/checkin', async (req, res) => {
   };
 
   attendance.unshift(newAttendance);
-  saveCollection('attendance', attendance);
-  saveCollection('lockers', lockers);
+  await saveCollection('attendance', attendance);
+  await saveCollection('lockers', lockers);
 
   // Send Telegram bot notification
   notifyCheckIn(member, assignedLocker);
@@ -186,9 +186,9 @@ router.post('/checkin', async (req, res) => {
 });
 
 // Check-out (Free locker)
-router.post('/checkout/:id', (req, res) => {
-  let attendance = loadCollection('attendance');
-  let lockers = loadCollection('lockers');
+router.post('/checkout/:id', async (req, res) => {
+  let attendance = await loadCollection('attendance');
+  let lockers = await loadCollection('lockers');
 
   const record = attendance.find(a => a.id === req.params.id);
   if (record) {
@@ -204,8 +204,8 @@ router.post('/checkout/:id', (req, res) => {
       }
     });
 
-    saveCollection('attendance', attendance);
-    saveCollection('lockers', lockers);
+    await saveCollection('attendance', attendance);
+    await saveCollection('lockers', lockers);
   }
 
   res.json({ success: true, record });

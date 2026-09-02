@@ -3,13 +3,13 @@ const router = express.Router();
 const { loadCollection, saveCollection } = require('../config/dataStore');
 
 // Get all trainers
-router.get('/', (req, res) => {
-  const trainers = loadCollection('trainers');
+router.get('/', async (req, res) => {
+  const trainers = await loadCollection('trainers');
   res.json(trainers);
 });
 
 // Add new trainer
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { fullName, phone, specialty, commissionRate } = req.body;
 
@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
       return res.status(400).json({ error: "Murabbiy ismi kiritilishi shart" });
     }
 
-    const trainers = loadCollection('trainers');
+    const trainers = await loadCollection('trainers');
     const newTrainer = {
       id: `tr_${Date.now()}`,
       fullName,
@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
     };
 
     trainers.unshift(newTrainer);
-    saveCollection('trainers', trainers);
+    await saveCollection('trainers', trainers);
 
     res.status(201).json({ success: true, trainer: newTrainer });
   } catch (err) {
@@ -39,9 +39,9 @@ router.post('/', (req, res) => {
 });
 
 // Update trainer
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   const { fullName, phone, specialty, commissionRate } = req.body;
-  let trainers = loadCollection('trainers');
+  let trainers = await loadCollection('trainers');
 
   const index = trainers.findIndex(t => t.id === req.params.id);
   if (index === -1) {
@@ -56,32 +56,32 @@ router.put('/:id', (req, res) => {
     commissionRate: commissionRate !== undefined ? Number(commissionRate) : trainers[index].commissionRate
   };
 
-  saveCollection('trainers', trainers);
+  await saveCollection('trainers', trainers);
   res.json({ success: true, trainer: trainers[index] });
 });
 
 // Delete trainer
-router.delete('/:id', (req, res) => {
-  let trainers = loadCollection('trainers');
+router.delete('/:id', async (req, res) => {
+  let trainers = await loadCollection('trainers');
   const filtered = trainers.filter(t => t.id !== req.params.id);
 
   if (trainers.length === filtered.length) {
     return res.status(404).json({ error: "Murabbiy topilmadi" });
   }
 
-  saveCollection('trainers', filtered);
+  await saveCollection('trainers', filtered);
   res.json({ success: true, message: "Murabbiy o'chirildi" });
 });
 
 // Assign PT sessions to member under a trainer
-router.post('/assign-member', (req, res) => {
+router.post('/assign-member', async (req, res) => {
   const { trainerId, memberId, memberName, totalSessions } = req.body;
 
   if (!trainerId || !memberId) {
     return res.status(400).json({ error: "Murabbiy va Mijoz tanlanishi kerak" });
   }
 
-  let trainers = loadCollection('trainers');
+  let trainers = await loadCollection('trainers');
   const trainer = trainers.find(t => t.id === trainerId);
 
   if (!trainer) {
@@ -104,14 +104,14 @@ router.post('/assign-member', (req, res) => {
     });
   }
 
-  saveCollection('trainers', trainers);
+  await saveCollection('trainers', trainers);
   res.json({ success: true, trainer });
 });
 
 // Deduct 1 PT session from member
-router.post('/deduct-session', (req, res) => {
+router.post('/deduct-session', async (req, res) => {
   const { trainerId, memberId } = req.body;
-  let trainers = loadCollection('trainers');
+  let trainers = await loadCollection('trainers');
 
   const trainer = trainers.find(t => t.id === trainerId);
   if (!trainer || !trainer.assignedMembers) {
@@ -128,7 +128,7 @@ router.post('/deduct-session', (req, res) => {
   }
 
   assigned.remainingSessions -= 1;
-  saveCollection('trainers', trainers);
+  await saveCollection('trainers', trainers);
 
   res.json({ success: true, remainingSessions: assigned.remainingSessions, trainer });
 });

@@ -643,13 +643,28 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
 
                   {/* Date Selector Input when Custom Period is active */}
                   {posPeriod === 'custom' && (
-                    <div className="flex items-center gap-2 bg-slate-950 px-3 py-1 rounded-xl border border-amber-500/50">
-                      <Calendar className="w-4 h-4 text-amber-400" />
+                    <div 
+                      onClick={() => {
+                        const el = document.getElementById('pos-custom-date-picker');
+                        if (el) {
+                          if (typeof el.showPicker === 'function') el.showPicker();
+                          else el.focus();
+                        }
+                      }}
+                      className="flex items-center gap-2 bg-slate-950 px-3.5 py-1.5 rounded-xl border border-amber-500 hover:border-amber-400 cursor-pointer transition shadow-lg shadow-amber-500/10 group"
+                      title="Kalendardan sana tanlash uchun bosing"
+                    >
+                      <Calendar className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition" />
                       <input
+                        id="pos-custom-date-picker"
                         type="date"
                         value={posCustomDate}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (typeof e.target.showPicker === 'function') e.target.showPicker();
+                        }}
                         onChange={e => setPosCustomDate(e.target.value)}
-                        className="bg-transparent text-amber-400 font-bold text-xs focus:outline-none"
+                        className="bg-transparent text-amber-400 font-bold text-xs focus:outline-none cursor-pointer [color-scheme:dark]"
                       />
                     </div>
                   )}
@@ -808,13 +823,28 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
 
                   {/* Date Selector Input when Custom Period is active */}
                   {revenuePeriod === 'custom' && (
-                    <div className="flex items-center gap-2 bg-slate-950 px-3 py-1 rounded-xl border border-emerald-500/50">
-                      <Calendar className="w-4 h-4 text-emerald-400" />
+                    <div 
+                      onClick={() => {
+                        const el = document.getElementById('revenue-custom-date-picker');
+                        if (el) {
+                          if (typeof el.showPicker === 'function') el.showPicker();
+                          else el.focus();
+                        }
+                      }}
+                      className="flex items-center gap-2 bg-slate-950 px-3.5 py-1.5 rounded-xl border border-emerald-500 hover:border-emerald-400 cursor-pointer transition shadow-lg shadow-emerald-500/10 group"
+                      title="Kalendardan sana tanlash uchun bosing"
+                    >
+                      <Calendar className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition" />
                       <input
+                        id="revenue-custom-date-picker"
                         type="date"
                         value={revenueCustomDate}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (typeof e.target.showPicker === 'function') e.target.showPicker();
+                        }}
                         onChange={e => setRevenueCustomDate(e.target.value)}
-                        className="bg-transparent text-emerald-400 font-bold text-xs focus:outline-none"
+                        className="bg-transparent text-emerald-400 font-bold text-xs focus:outline-none cursor-pointer [color-scheme:dark]"
                       />
                     </div>
                   )}

@@ -115,17 +115,43 @@ router.post('/checkin', async (req, res) => {
     }
   } else {
     // Tekshirish: tanlangan shkaf mijozning jinsiga mos kelishini
-    const wrongGenderLocker = lockers[oppositeGenderKey]?.find(l => l.number === assignedLocker);
+    const cleanLocker = assignedLocker.trim().toUpperCase();
+    
+    // 1. Jinsga nisbatan noto'g'ri prefiks tekshiruvi (M- Erkaklar, F- Ayollar)
+    if (member.gender === 'Ayol' && (cleanLocker.startsWith('M-') || cleanLocker.startsWith('M'))) {
+      return res.status(400).json({ 
+        error: `Xatolik! "${assignedLocker}" shkafi ERKAKLARGA tegishli. ${member.fullName} (Ayol) uchun faqat Ayollar (F-) shkaflaridan biriktirish mumkin.`,
+        member 
+      });
+    }
+    if (member.gender !== 'Ayol' && (cleanLocker.startsWith('F-') || cleanLocker.startsWith('F'))) {
+      return res.status(400).json({ 
+        error: `Xatolik! "${assignedLocker}" shkafi AYOLLARGA tegishli. ${member.fullName} (Erkak) uchun faqat Erkaklar (M-) shkaflaridan biriktirish mumkin.`,
+        member 
+      });
+    }
+
+    // 2. Qarama-qarshi jins shkaflar ro'yxatida mavjudligini tekshirish
+    const wrongGenderLocker = lockers[oppositeGenderKey]?.find(l => l.number.toUpperCase() === cleanLocker);
     if (wrongGenderLocker) {
       return res.status(400).json({ 
         error: `Xatolik! "${assignedLocker}" shkafi ${member.gender === 'Ayol' ? 'ERKAKLAR' : 'AYOLLAR'}ga tegishli. ${member.fullName} (${member.gender}) uchun ${member.gender === 'Ayol' ? 'Ayollar (F-)' : 'Erkaklar (M-)'} shkafini tanlang.`,
         member 
       });
     }
-    const targetLocker = lockers[genderKey].find(l => l.number === assignedLocker);
+
+    // 3. O'z jinsidagi shkafni topish va bandligini tekshirish
+    const targetLocker = lockers[genderKey].find(l => l.number.toUpperCase() === cleanLocker);
     if (targetLocker) {
+      if (targetLocker.status === 'Occupied') {
+        return res.status(400).json({
+          error: `Xatolik! "${assignedLocker}" shkafi allaqachon BAND (${targetLocker.assignedTo || 'boshqa mijoz'}). Iltimos, bo'sh shkaf tanlang.`,
+          member
+        });
+      }
       targetLocker.status = 'Occupied';
       targetLocker.assignedTo = member.fullName;
+      assignedLocker = targetLocker.number;
     }
   }
 

@@ -14,7 +14,12 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
     note: ''
   });
   const [errors, setErrors] = useState({});
-  const [timeFilter, setTimeFilter] = useState('all'); // 'all' | 'today' | 'week'
+  const today = new Date().toISOString().split('T')[0];
+  const currentMonthStr = today.slice(0, 7);
+
+  const [timeFilter, setTimeFilter] = useState('today'); // default: 'today'
+  const [customDate, setCustomDate] = useState(today);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthStr);
 
   const categories = ['IJARA', 'KOMMUNAL', 'OYLIK', 'JIHOZLAR', 'REKLAMA', 'BOSHQA'];
   const categoryColors = {
@@ -27,7 +32,6 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
   };
 
   // Date helpers
-  const today = new Date().toISOString().split('T')[0];
   const getStartOfWeek = () => {
     const now = new Date();
     const dayOfWeek = now.getDay();
@@ -49,19 +53,33 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
         return eDate >= weekStart && eDate <= today;
       });
     }
+    if (timeFilter === 'month') {
+      return expenses.filter(e => {
+        const eDate = (e.date || '').split('T')[0];
+        return eDate.startsWith(selectedMonth);
+      });
+    }
+    if (timeFilter === 'custom') {
+      return expenses.filter(e => (e.date || '').split('T')[0] === customDate);
+    }
     return expenses;
-  }, [expenses, timeFilter, today, weekStart]);
+  }, [expenses, timeFilter, today, weekStart, selectedMonth, customDate]);
 
   // KPI calculations
   const totalExpense = filteredExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const cashExpense = filteredExpenses.filter(e => e.paymentMethod === 'Naqd').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const cardExpense = filteredExpenses.filter(e => e.paymentMethod === 'Karta / Click').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
-  // Today / This week totals (always calculated, regardless of filter)
+  // Today / Month / Week totals (always calculated, regardless of filter)
   const todayTotal = useMemo(() => {
     return expenses.filter(e => (e.date || '').split('T')[0] === today)
       .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   }, [expenses, today]);
+
+  const monthTotal = useMemo(() => {
+    return expenses.filter(e => (e.date || '').startsWith(selectedMonth))
+      .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+  }, [expenses, selectedMonth]);
 
   const weekTotal = useMemo(() => {
     return expenses.filter(e => {
@@ -173,7 +191,11 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
     }
   };
 
-  const filterLabel = timeFilter === 'today' ? 'Bugungi' : timeFilter === 'week' ? 'Shu Haftalik' : 'Barcha';
+  const filterLabel = 
+    timeFilter === 'today' ? 'Bugungi' : 
+    timeFilter === 'week' ? 'Shu Haftalik' : 
+    timeFilter === 'month' ? `Oylik (${selectedMonth})` :
+    timeFilter === 'custom' ? `Tanlangan Sana (${customDate})` : 'Barcha';
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
@@ -190,18 +212,20 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* Time Filter Buttons */}
-          <div className="flex items-center bg-slate-900/80 rounded-xl border border-slate-800 p-0.5">
+          <div className="flex items-center bg-slate-900/90 rounded-xl border border-slate-800 p-1 flex-wrap gap-1">
             {[
-              { key: 'all', label: '📋 Barchasi' },
               { key: 'today', label: '📅 Bugun' },
-              { key: 'week', label: '📆 Hafta' }
+              { key: 'week', label: '📊 Hafta' },
+              { key: 'month', label: '🗓 Oylik' },
+              { key: 'custom', label: '📆 Sana Tanlash' },
+              { key: 'all', label: '📋 Barchasi' }
             ].map(f => (
               <button
                 key={f.key}
                 onClick={() => setTimeFilter(f.key)}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                   timeFilter === f.key
-                    ? 'bg-rose-500/20 text-rose-400 shadow-sm'
+                    ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/25'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -210,9 +234,65 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
             ))}
           </div>
 
+          {/* Custom Date Selector when 'custom' is active */}
+          {timeFilter === 'custom' && (
+            <div 
+              onClick={() => {
+                const el = document.getElementById('expense-custom-date-picker');
+                if (el) {
+                  if (typeof el.showPicker === 'function') el.showPicker();
+                  else el.focus();
+                }
+              }}
+              className="flex items-center gap-2 bg-slate-950 px-3.5 py-1.5 rounded-xl border border-rose-500 hover:border-rose-400 cursor-pointer transition shadow-lg shadow-rose-500/10 group"
+              title="Kalendardan sana tanlash uchun bosing"
+            >
+              <Calendar className="w-4 h-4 text-rose-400 shrink-0 group-hover:scale-110 transition" />
+              <input
+                id="expense-custom-date-picker"
+                type="date"
+                value={customDate}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (typeof e.target.showPicker === 'function') e.target.showPicker();
+                }}
+                onChange={e => setCustomDate(e.target.value)}
+                className="bg-transparent text-rose-400 font-bold text-xs focus:outline-none cursor-pointer [color-scheme:dark]"
+              />
+            </div>
+          )}
+
+          {/* Month Selector when 'month' is active */}
+          {timeFilter === 'month' && (
+            <div 
+              onClick={() => {
+                const el = document.getElementById('expense-month-picker');
+                if (el) {
+                  if (typeof el.showPicker === 'function') el.showPicker();
+                  else el.focus();
+                }
+              }}
+              className="flex items-center gap-2 bg-slate-950 px-3.5 py-1.5 rounded-xl border border-rose-500 hover:border-rose-400 cursor-pointer transition shadow-lg shadow-rose-500/10 group"
+              title="Oyni tanlash uchun bosing"
+            >
+              <Calendar className="w-4 h-4 text-rose-400 shrink-0 group-hover:scale-110 transition" />
+              <input
+                id="expense-month-picker"
+                type="month"
+                value={selectedMonth}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (typeof e.target.showPicker === 'function') e.target.showPicker();
+                }}
+                onChange={e => setSelectedMonth(e.target.value)}
+                className="bg-transparent text-rose-400 font-bold text-xs focus:outline-none cursor-pointer [color-scheme:dark]"
+              />
+            </div>
+          )}
+
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white text-sm font-bold shadow-lg shadow-rose-500/20 flex items-center gap-2"
+            className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-rose-500/20 flex items-center gap-2 transition transform hover:scale-105 active:scale-95 shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Yangi Harajat Qo'shish</span>
@@ -254,19 +334,19 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
           </div>
         </div>
 
-        {/* Haftalik */}
-        <div className="glass-card p-4 sm:p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/5">
+        {/* Oylik Harajat */}
+        <div className="glass-card p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-500/5">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">📆 Shu Hafta</span>
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+            <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">🗓 Shu Oylik</span>
+            <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center">
               <BarChart3 className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
             <h3 className="text-lg sm:text-xl font-extrabold text-white tracking-tight">
-              {weekTotal.toLocaleString()} <span className="text-[10px] text-slate-400 font-medium">SO'M</span>
+              {monthTotal.toLocaleString()} <span className="text-[10px] text-slate-400 font-medium">SO'M</span>
             </h3>
-            <p className="text-[10px] text-slate-400 mt-0.5">{weekStart} ~ {today}</p>
+            <p className="text-[10px] text-slate-400 mt-0.5">{selectedMonth}</p>
           </div>
         </div>
 
@@ -288,8 +368,8 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
         {/* Karta */}
         <div className="glass-card p-4 sm:p-5 rounded-2xl">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">💳 Karta</span>
-            <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm">
+            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">💳 Karta</span>
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm">
               💳
             </div>
           </div>
@@ -575,8 +655,11 @@ export default function Expenses({ expenses = [], onRefresh, showToast }) {
                   <input
                     type="date"
                     value={form.date}
+                    onClick={(e) => {
+                      if (typeof e.target.showPicker === 'function') e.target.showPicker();
+                    }}
                     onChange={e => setForm({ ...form, date: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-rose-500"
+                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-rose-500 cursor-pointer [color-scheme:dark]"
                   />
                 </div>
               </div>

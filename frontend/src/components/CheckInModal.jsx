@@ -65,6 +65,19 @@ export default function CheckInModal({ isOpen, onClose, onCheckInSuccess, member
     e.preventDefault();
     if (!query) return;
 
+    // Client-side locker gender validation
+    if (lockerNumber && lockerNumber.trim()) {
+      const cleanL = lockerNumber.trim().toUpperCase();
+      if (selectedGender === 'Ayol' && (cleanL.startsWith('M-') || cleanL.startsWith('M'))) {
+        setError(`Xatolik: "${lockerNumber}" shkafi Erkaklarga tegishli! Ayol mijoz uchun faqat "F-" shkafini tanlash mumkin.`);
+        return;
+      }
+      if (selectedGender !== 'Ayol' && (cleanL.startsWith('F-') || cleanL.startsWith('F'))) {
+        setError(`Xatolik: "${lockerNumber}" shkafi Ayollarga tegishli! Erkak mijoz uchun faqat "M-" shkafini tanlash mumkin.`);
+        return;
+      }
+    }
+
     setLoading(true);
     setError('');
     setSuccessResult(null);

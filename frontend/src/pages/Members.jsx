@@ -30,13 +30,16 @@ export default function Members({ members, subscriptions, onRefresh, onOpenAddMe
   const [renewSubId, setRenewSubId] = useState(subscriptions[0]?.id || '');
   const [renewPaymentMethod, setRenewPaymentMethod] = useState('Naqd');
   const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'debt' | 'name'
 
-  // Filter members by search, status, and payment method
+  // Filter members by search, status, and payment method safely
   const filtered = members.filter(m => {
-    const matchesSearch = 
-      m.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      m.phone.includes(search) ||
-      m.id.toLowerCase().includes(search.toLowerCase());
+    const term = (search || '').toLowerCase().trim();
+    const fullName = (m.fullName || '').toLowerCase();
+    const phone = (m.phone || '').toLowerCase();
+    const id = (m.id || '').toLowerCase();
+
+    const matchesSearch = !term || fullName.includes(term) || phone.includes(term) || id.includes(term);
     
     const matchesStatus = 
       statusFilter === 'All' ? true :
@@ -51,8 +54,20 @@ export default function Members({ members, subscriptions, onRefresh, onOpenAddMe
     return matchesSearch && matchesStatus && matchesPayment;
   });
 
-  // Sort members by debt DESCENDING (highest debt first)
-  const sortedMembers = [...filtered].sort((a, b) => (b.debt || 0) - (a.debt || 0));
+  // Sort members: Default NEWEST first so newly added members appear at the very TOP!
+  const sortedMembers = [...filtered].sort((a, b) => {
+    if (sortBy === 'debt') {
+      return (Number(b.debt) || 0) - (Number(a.debt) || 0);
+    }
+    if (sortBy === 'name') {
+      return (a.fullName || '').localeCompare(b.fullName || '');
+    }
+    // 'newest': eng yangi qo'shilgan mijozlar eng birinchi o'rinda
+    if (a.createdAt && b.createdAt) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    return (b.id || '').localeCompare(a.id || '');
+  });
 
   const handleDelete = async (id) => {
     if (!window.confirm("Rostdan ham ushbu mijozni o'chirmoqchimisiz?")) return;
@@ -219,6 +234,37 @@ export default function Members({ members, subscriptions, onRefresh, onOpenAddMe
               }`}
             >
               💳 Karta / Click
+            </button>
+          </div>
+
+          {/* Sort By Controls */}
+          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+            <button
+              onClick={() => setSortBy('newest')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                sortBy === 'newest' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+              title="Eng yangi qo'shilgan mijozlar birinchi o'rinda"
+            >
+              🆕 Yangilar
+            </button>
+            <button
+              onClick={() => setSortBy('debt')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                sortBy === 'debt' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+              title="Qarzi bor mijozlar birinchi o'rinda"
+            >
+              ⚠️ Qarzdorlar
+            </button>
+            <button
+              onClick={() => setSortBy('name')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                sortBy === 'name' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+              title="Alifbo bo'yicha saralash"
+            >
+              🔤 Ism (A-Z)
             </button>
           </div>
         </div>

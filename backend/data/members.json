@@ -1,73 +1,29 @@
 [
   {
-    "id": "M-1005",
-    "fullName": "Azizbek Karimov",
-    "phone": "+998912345678",
-    "telegramId": "",
+    "id": "M-1006",
+    "fullName": "Xamrabek Isakov",
+    "phone": "+998773603061",
+    "telegramId": "222333444",
     "gender": "Erkak",
-    "subscriptionId": "sub_1",
-    "subscriptionName": "Standart (1 Oylik)",
+    "subscriptionId": "sub_2",
+    "subscriptionName": "VIP (1 Oylik + Murabbiy)",
     "startDate": "2026-09-02T19:00:00.000Z",
     "endDate": "2026-10-02T19:00:00.000Z",
-    "remainingVisits": 30,
+    "remainingVisits": 29,
     "status": "Active",
-    "totalPaid": "300000",
-    "debt": "0",
-    "paymentMethod": "Karta / Click",
-    "paymentHistory": [
-      {
-        "id": "PAY-1",
-        "date": "2026-09-03T06:31:48.683Z",
-        "note": "Boshlang'ich a'zolik to'lovi",
-        "amount": 300000,
-        "paymentMethod": "Karta / Click"
-      }
-    ],
-    "createdAt": "2026-09-03T06:31:48.683Z"
-  },
-  {
-    "id": "M-1002",
-    "fullName": "Jasur Testov",
-    "phone": "+998909998877",
-    "telegramId": "",
-    "gender": "Erkak",
-    "subscriptionId": "sub_1",
-    "subscriptionName": "Standart (1 Oylik)",
-    "startDate": "2026-09-02T19:00:00.000Z",
-    "endDate": "2026-10-02T19:00:00.000Z",
-    "remainingVisits": 30,
-    "status": "Active",
-    "totalPaid": "300000",
-    "debt": "0",
+    "totalPaid": "250000",
+    "debt": "250000",
     "paymentMethod": "Naqd",
     "paymentHistory": [
       {
         "id": "PAY-1",
-        "date": "2026-09-03T06:05:46.283Z",
+        "date": "2026-09-03T07:18:23.613Z",
         "note": "Boshlang'ich a'zolik to'lovi",
-        "amount": 300000,
+        "amount": 250000,
         "paymentMethod": "Naqd"
       }
     ],
-    "createdAt": "2026-09-03T06:05:46.283Z"
-  },
-  {
-    "id": "M-1001",
-    "fullName": "Test Member",
-    "phone": "+998901234567",
-    "telegramId": "",
-    "gender": "Erkak",
-    "subscriptionId": "sub_1",
-    "subscriptionName": "Standart (1 Oylik)",
-    "startDate": "2026-09-01T19:00:00.000Z",
-    "endDate": "2026-10-01T19:00:00.000Z",
-    "remainingVisits": 30,
-    "status": "Active",
-    "totalPaid": null,
-    "debt": null,
-    "paymentMethod": "Naqd",
-    "paymentHistory": [],
-    "createdAt": "2026-09-02T13:38:18.595Z"
+    "createdAt": "2026-09-03T07:18:23.613Z"
   },
   {
     "id": "M-1004",

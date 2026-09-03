@@ -1,13 +1,18 @@
 const { Pool } = require('pg');
 
 // =========================================================
-// PostgreSQL ulanishi — Supabase Connection Pooler (port 6543)
-// Keep-Alive va uzilishlarni oldini olish sozlamalari bilan
+// PostgreSQL ulanishi — Supabase Connection Pooler
+// Render.com va local muhit uchun ishonchli fallback bilan
 // =========================================================
+const DEFAULT_DATABASE_URL = "postgresql://postgres.omeyjemtzhuouglnjylv:GymAdmin2026%21@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres";
+const connectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
+
+console.log('🔌 DB Connection status:', process.env.DATABASE_URL ? 'DATABASE_URL (Env orqali)' : 'Fallback Supabase URL ishlatilmoqda');
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   ssl: { rejectUnauthorized: false },
-  max: 15,
+  max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
   keepAlive: true,
@@ -15,7 +20,7 @@ const pool = new Pool({
 });
 
 pool.on('error', (err) => {
-  console.error('⚠️ PostgreSQL pool xatosi (avtomatik qayta ulanadi):', err.message);
+  console.error('⚠️ PostgreSQL pool ogohlantirish (avto-tiklanadi):', err.message);
 });
 
 // Xatoliklarda (uzilishlarda) qayta urinish funksiyasi
@@ -28,18 +33,16 @@ async function queryWithRetry(text, params = [], maxRetries = 3) {
       attempt++;
       console.warn(`⚠️ DB Query urinish ${attempt}/${maxRetries} xatosi: ${err.message}`);
       if (attempt >= maxRetries) throw err;
-      await new Promise(r => setTimeout(r, 500 * attempt));
+      await new Promise(r => setTimeout(r, 600 * attempt));
     }
   }
 }
 
 // =========================================================
 // Asosiy Relational Jadvallarni Yaratish
-// Foydalanuvchi Supabase boshqaruv panelida (Table Editor)
-// har bir jadval va qatorni to'g'ridan-to'g'ri ko'rishi uchun
 // =========================================================
 async function createTables() {
-  // 1. Zaxira va umumiy kolleksiyalar uchun gym_data jadvali
+  // 1. gym_data jadvali
   await queryWithRetry(`
     CREATE TABLE IF NOT EXISTS gym_data (
       key         TEXT PRIMARY KEY,
@@ -48,7 +51,7 @@ async function createTables() {
     )
   `);
 
-  // 2. Mustaqil Relational MEMBERS jadvali (Supabase Table Editor uchun)
+  // 2. Mustaqil Relational MEMBERS jadvali
   await queryWithRetry(`
     CREATE TABLE IF NOT EXISTS members (
       id                VARCHAR PRIMARY KEY,

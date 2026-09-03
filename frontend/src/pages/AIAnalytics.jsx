@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config';
-import { 
-  Brain, 
-  Sparkles, 
-  AlertTriangle, 
-  Clock, 
-  TrendingUp, 
-  Calendar, 
-  Send, 
-  Users, 
-  RefreshCw, 
-  CheckCircle2, 
+import {
+  Brain,
+  Sparkles,
+  AlertTriangle,
+  Clock,
+  TrendingUp,
+  Calendar,
+  Send,
+  Users,
+  RefreshCw,
+  CheckCircle2,
   HelpCircle,
   Search,
   Filter,
@@ -19,16 +19,16 @@ import {
   Moon,
   Sun
 } from 'lucide-react';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  AreaChart, 
-  Area, 
-  CartesianGrid 
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  AreaChart,
+  Area,
+  CartesianGrid
 } from 'recharts';
 
 export default function AIAnalytics({ showToast }) {
@@ -90,7 +90,7 @@ export default function AIAnalytics({ showToast }) {
   const allRiskMembers = churnData?.riskMembers || [];
   const filteredRiskMembers = allRiskMembers.filter(m => {
     const matchesFilter = churnFilter === 'All' || m.riskLevel === churnFilter;
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       m.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (m.phone && m.phone.includes(searchQuery));
     return matchesFilter && matchesSearch;
@@ -98,7 +98,7 @@ export default function AIAnalytics({ showToast }) {
 
   return (
     <div className="p-3 sm:p-5 lg:p-7 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
-      
+
       {/* Header Banner */}
       <div className="p-6 rounded-2xl bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border border-indigo-500/30 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -238,11 +238,10 @@ export default function AIAnalytics({ showToast }) {
                       </span>
                     </td>
                     <td>
-                      <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                        m.riskLevel === 'Yuqori' 
-                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' 
+                      <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${m.riskLevel === 'Yuqori'
+                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
                           : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                      }`}>
+                        }`}>
                         {m.riskLevel === 'Yuqori' ? '🔴 Yuqori Xavf' : "🟡 O'rtacha"}
                       </span>
                     </td>
@@ -280,7 +279,7 @@ export default function AIAnalytics({ showToast }) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">
-                2. Zal Gavjumligi va Tig'iz Soatlar Tahlili (Peak Hours & Density)
+                2. Zal Gavjumligi va tig'iz soatlar tahlili (Peak Hours & Density)
               </h3>
               <p className="text-xs text-slate-400">
                 Kun davomida zalga eng ko'p va eng kam tashrif buyuriladigan soatlar monitoringi.
@@ -315,7 +314,7 @@ export default function AIAnalytics({ showToast }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
                 <XAxis dataKey="timeSlot" stroke="#94a3b8" fontSize={11} tickLine={false} />
                 <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
                   formatter={(val) => [`${val} nafar mijoz`, "Tashriflar"]}
                 />
@@ -437,14 +436,14 @@ export default function AIAnalytics({ showToast }) {
             <AreaChart data={habitsData?.weeklyTrends || []}>
               <defs>
                 <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#a855f7" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#a855f7" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
               <XAxis dataKey="day" stroke="#94a3b8" fontSize={11} tickLine={false} />
               <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} />
-              <Tooltip 
+              <Tooltip
                 contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
                 formatter={(val) => [`${val} nafar tashrif`, "Kelganlar"]}
               />

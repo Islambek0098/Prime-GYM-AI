@@ -40,28 +40,28 @@ app.get('/api/health', (req, res) => {
 });
 
 async function startServer() {
+  // 1. Express serverni darhol ishga tushirish (Render deploy fail bo'lmasligi uchun)
+  const server = app.listen(PORT, () => {
+    console.log(`🚀 GYM Admin Backend server running on port ${PORT}`);
+  });
+
+  // 2. DataStore va Supabase ulanishini sozlash
   try {
     await initDataStore();
     console.log('✅ PostgreSQL (Supabase) ulanishi muvaffaqiyatli');
-
-    app.listen(PORT, () => {
-      console.log(`🚀 GYM Admin Backend server running on http://localhost:${PORT}`);
-    });
-
-    autoCheckoutMidnight();
-    setInterval(autoCheckoutMidnight, 60000);
-
-    setInterval(() => {
-      checkAndSendExpiringReminders().catch(err =>
-        console.error("Telegram reminders error:", err)
-      );
-    }, 6 * 60 * 60 * 1000);
-
   } catch (err) {
-    console.error('❌ Server ishga tushishda xatolik:', err.message);
-    console.error('📋 DATABASE_URL ni .env faylida togri sozlang!');
-    process.exit(1);
+    console.error('⚠️ Supabase ulanishida ogohlantirish (server lokal zaxira bilan ishlayapti):', err.message);
   }
+
+  // 3. Avtomatlashtirilgan davriy vazifalar
+  autoCheckoutMidnight();
+  setInterval(autoCheckoutMidnight, 60000);
+
+  setInterval(() => {
+    checkAndSendExpiringReminders().catch(err =>
+      console.error("Telegram reminders error:", err)
+    );
+  }, 6 * 60 * 60 * 1000);
 }
 
 startServer();

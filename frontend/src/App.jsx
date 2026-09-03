@@ -9,6 +9,7 @@ import Toast from './components/Toast';
 
 // Lazy-loaded page components for Code Splitting & Performance
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const AIAnalytics = lazy(() => import('./pages/AIAnalytics'));
 const Members = lazy(() => import('./pages/Members'));
 const Attendance = lazy(() => import('./pages/Attendance'));
 const Trainers = lazy(() => import('./pages/Trainers'));
@@ -203,10 +204,15 @@ export default function App() {
                 subscriptions={subscriptions}
                 onOpenCheckIn={() => setIsCheckInOpen(true)}
                 onOpenAddMember={handleOpenAddMember}
+                onNavigateToAI={() => setActiveTab('ai-analytics')}
                 isLoading={isLoading || isWakingUp}
                 isConnected={isConnected}
                 onRetry={() => fetchAllData(true)}
               />
+            )}
+
+            {activeTab === 'ai-analytics' && (
+              <AIAnalytics showToast={showToast} />
             )}
 
             {activeTab === 'members' && (

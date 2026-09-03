@@ -110,6 +110,13 @@ router.delete('/:id', async (req, res) => {
   members = members.filter(m => m.id !== req.params.id);
   await saveCollection('members', members);
 
+  try {
+    const { queryWithRetry } = require('../config/db');
+    await queryWithRetry('DELETE FROM members WHERE id = $1', [req.params.id]);
+  } catch (err) {
+    console.error("Relational members delete xatosi:", err.message);
+  }
+
   res.json({ success: true, id: req.params.id });
 });
 

@@ -1,5 +1,75 @@
 [
   {
+    "id": "M-1005",
+    "fullName": "Azizbek Karimov",
+    "phone": "+998912345678",
+    "telegramId": "",
+    "gender": "Erkak",
+    "subscriptionId": "sub_1",
+    "subscriptionName": "Standart (1 Oylik)",
+    "startDate": "2026-09-02T19:00:00.000Z",
+    "endDate": "2026-10-02T19:00:00.000Z",
+    "remainingVisits": 30,
+    "status": "Active",
+    "totalPaid": "300000",
+    "debt": "0",
+    "paymentMethod": "Karta / Click",
+    "paymentHistory": [
+      {
+        "id": "PAY-1",
+        "date": "2026-09-03T06:31:48.683Z",
+        "note": "Boshlang'ich a'zolik to'lovi",
+        "amount": 300000,
+        "paymentMethod": "Karta / Click"
+      }
+    ],
+    "createdAt": "2026-09-03T06:31:48.683Z"
+  },
+  {
+    "id": "M-1002",
+    "fullName": "Jasur Testov",
+    "phone": "+998909998877",
+    "telegramId": "",
+    "gender": "Erkak",
+    "subscriptionId": "sub_1",
+    "subscriptionName": "Standart (1 Oylik)",
+    "startDate": "2026-09-02T19:00:00.000Z",
+    "endDate": "2026-10-02T19:00:00.000Z",
+    "remainingVisits": 30,
+    "status": "Active",
+    "totalPaid": "300000",
+    "debt": "0",
+    "paymentMethod": "Naqd",
+    "paymentHistory": [
+      {
+        "id": "PAY-1",
+        "date": "2026-09-03T06:05:46.283Z",
+        "note": "Boshlang'ich a'zolik to'lovi",
+        "amount": 300000,
+        "paymentMethod": "Naqd"
+      }
+    ],
+    "createdAt": "2026-09-03T06:05:46.283Z"
+  },
+  {
+    "id": "M-1001",
+    "fullName": "Test Member",
+    "phone": "+998901234567",
+    "telegramId": "",
+    "gender": "Erkak",
+    "subscriptionId": "sub_1",
+    "subscriptionName": "Standart (1 Oylik)",
+    "startDate": "2026-09-01T19:00:00.000Z",
+    "endDate": "2026-10-01T19:00:00.000Z",
+    "remainingVisits": 30,
+    "status": "Active",
+    "totalPaid": null,
+    "debt": null,
+    "paymentMethod": "Naqd",
+    "paymentHistory": [],
+    "createdAt": "2026-09-02T13:38:18.595Z"
+  },
+  {
     "id": "M-1004",
     "fullName": "Indira Seydametova",
     "phone": "sadsadas",
@@ -7,20 +77,20 @@
     "gender": "Erkak",
     "subscriptionId": "sub_1787655824024",
     "subscriptionName": "Bir ayliq STANDART",
-    "startDate": "2026-08-26",
-    "endDate": "2026-09-25",
+    "startDate": "2026-08-25T19:00:00.000Z",
+    "endDate": "2026-09-24T19:00:00.000Z",
     "remainingVisits": 15,
     "status": "Active",
-    "totalPaid": 200000,
-    "debt": 0,
+    "totalPaid": "200000",
+    "debt": "0",
     "paymentMethod": "Naqd",
     "paymentHistory": [
       {
         "id": "PAY-1",
         "date": "2026-08-26T12:18:05.802Z",
+        "note": "Boshlang'ich a'zolik to'lovi",
         "amount": 200000,
-        "paymentMethod": "Naqd",
-        "note": "Boshlang'ich a'zolik to'lovi"
+        "paymentMethod": "Naqd"
       }
     ],
     "createdAt": "2026-08-26T12:18:05.802Z"
@@ -33,94 +103,29 @@
     "gender": "Erkak",
     "subscriptionId": "sub_1787657605410",
     "subscriptionName": "Bir ayliq + trenrer",
-    "startDate": "2026-08-26",
-    "endDate": "2026-09-25",
+    "startDate": "2026-08-25T19:00:00.000Z",
+    "endDate": "2026-09-24T19:00:00.000Z",
     "remainingVisits": 13,
     "status": "Active",
-    "totalPaid": 300000,
-    "debt": 100000,
+    "totalPaid": "300000",
+    "debt": "100000",
     "paymentMethod": "Naqd",
     "paymentHistory": [
       {
         "id": "PAY-1",
         "date": "2026-08-26T12:07:16.427Z",
+        "note": "Boshlang'ich a'zolik to'lovi",
         "amount": 200000,
-        "paymentMethod": "Naqd",
-        "note": "Boshlang'ich a'zolik to'lovi"
+        "paymentMethod": "Naqd"
       },
       {
         "id": "PAY-2",
         "date": "2026-08-26T12:07:55.003Z",
+        "note": "Qarzni so'ndirish / Qo'shimcha to'lov",
         "amount": 100000,
-        "paymentMethod": "Naqd",
-        "note": "Qarzni so'ndirish / Qo'shimcha to'lov"
+        "paymentMethod": "Naqd"
       }
     ],
     "createdAt": "2026-08-26T12:07:16.427Z"
-  },
-  {
-    "id": "M-1002",
-    "fullName": "Begis Otarbaev",
-    "phone": "+998900955599",
-    "telegramId": "1414141414",
-    "gender": "Erkak",
-    "subscriptionId": "sub_1787657605410",
-    "subscriptionName": "Bir ayliq + trenrer",
-    "startDate": "2026-08-25",
-    "endDate": "2026-09-24",
-    "remainingVisits": 15,
-    "status": "Active",
-    "totalPaid": 400000,
-    "debt": 0,
-    "createdAt": "2026-08-25T11:41:14.335Z",
-    "paymentMethod": "Naqd",
-    "paymentHistory": []
-  },
-  {
-    "id": "M-1001",
-    "fullName": "Islambek Urazbaev",
-    "phone": "+998943513232",
-    "telegramId": "1039259533",
-    "gender": "Erkak",
-    "subscriptionId": "sub_1787655824024",
-    "subscriptionName": "Bir ayliq STANDART",
-    "startDate": "2026-08-25",
-    "endDate": "2026-09-24",
-    "remainingVisits": 13,
-    "status": "Active",
-    "totalPaid": 200000,
-    "debt": 0,
-    "createdAt": "2026-08-25T11:40:42.340Z",
-    "paymentMethod": "Karta / Click",
-    "paymentHistory": [
-      {
-        "id": "PAY-1",
-        "date": "2026-08-25T13:16:20.901Z",
-        "amount": 50000,
-        "paymentMethod": "Karta / Click",
-        "note": "Qarzni so'ndirish / Qo'shimcha to'lov"
-      },
-      {
-        "id": "PAY-2",
-        "date": "2026-08-25T13:17:37.259Z",
-        "amount": 20000,
-        "paymentMethod": "Karta / Click",
-        "note": "Qarzni so'ndirish / Qo'shimcha to'lov"
-      },
-      {
-        "id": "PAY-3",
-        "date": "2026-08-26T11:39:47.954Z",
-        "amount": 20000,
-        "paymentMethod": "Karta / Click",
-        "note": "Qarzni so'ndirish / Qo'shimcha to'lov"
-      },
-      {
-        "id": "PAY-4",
-        "date": "2026-08-26T11:40:29.874Z",
-        "amount": 10000,
-        "paymentMethod": "Karta / Click",
-        "note": "Qarzni so'ndirish / Qo'shimcha to'lov"
-      }
-    ]
   }
 ]

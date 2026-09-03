@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
-export default function Dashboard({ members, attendance, posSales, subscriptions, onOpenCheckIn, onOpenAddMember, isLoading = false, isConnected = true, onRetry }) {
+export default function Dashboard({ members, attendance, posSales, subscriptions, onOpenCheckIn, onOpenAddMember, onNavigateToAI, isLoading = false, isConnected = true, onRetry }) {
   const [showPosModal, setShowPosModal] = useState(false);
   const [posPeriod, setPosPeriod] = useState('today'); // 'today' | 'week' | 'month' | 'custom'
   const [posCustomDate, setPosCustomDate] = useState(new Date().toISOString().split('T')[0]);
@@ -301,7 +301,7 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
 
       {/* AI Smart Analytics Section */}
       <div className="glass-card p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/20 shadow-xl space-y-6">
-        <div className="flex items-center justify-between border-b border-indigo-500/10 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-500/10 pb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-md">
               <Brain className="w-5 h-5 animate-pulse" />
@@ -317,6 +317,16 @@ export default function Dashboard({ members, attendance, posSales, subscriptions
               <p className="text-xs text-slate-400">Churn Risk (Yo'qolish xavfidagi mijozlar), Zal Gavjumligi va Tushum Prognozi</p>
             </div>
           </div>
+
+          {onNavigateToAI && (
+            <button
+              onClick={onNavigateToAI}
+              className="px-3.5 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/40 text-indigo-300 hover:text-white font-bold text-xs flex items-center gap-1.5 transition self-start sm:self-auto shadow-md"
+            >
+              <span>Batafsil AI Tahlilga o'tish</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

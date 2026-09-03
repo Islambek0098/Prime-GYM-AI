@@ -56,6 +56,14 @@ router.delete('/products/:id', async (req, res) => {
   }
 
   await saveCollection('posProducts', products);
+
+  try {
+    const { queryWithRetry } = require('../config/db');
+    await queryWithRetry('DELETE FROM pos_products WHERE id = $1', [req.params.id]);
+  } catch (err) {
+    console.error("Relational pos_products delete xatosi:", err.message);
+  }
+
   res.json({ success: true, message: "Mahsulot muvaffaqiyatli o'chirildi", id: req.params.id });
 });
 

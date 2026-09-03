@@ -6,15 +6,15 @@
     "items": [
       {
         "id": "prod_1787655900395",
+        "qty": 1,
         "name": "Suw  bez gaz  1.5 L",
-        "category": "Ichimlik",
+        "unit": "dona",
         "price": 6000,
         "stock": 10,
-        "unit": "dona",
-        "qty": 1
+        "category": "Ichimlik"
       }
     ],
-    "totalAmount": 6000,
+    "totalAmount": "6000",
     "paymentMethod": "Naqd",
     "date": "2026-08-26T12:00:32.454Z"
   },
@@ -25,15 +25,15 @@
     "items": [
       {
         "id": "prod_1787655900395",
+        "qty": 1,
         "name": "Suw  bez gaz  1.5 L",
-        "category": "Ichimlik",
+        "unit": "dona",
         "price": 6000,
         "stock": 11,
-        "unit": "dona",
-        "qty": 1
+        "category": "Ichimlik"
       }
     ],
-    "totalAmount": 6000,
+    "totalAmount": "6000",
     "paymentMethod": "Naqd",
     "date": "2026-08-26T11:17:09.748Z"
   },
@@ -44,15 +44,15 @@
     "items": [
       {
         "id": "prod_1787658172860",
+        "qty": 14,
         "name": "Suw bez gaz  1.0 L",
-        "category": "Ichimlik",
+        "unit": "dona",
         "price": 4000,
         "stock": 20,
-        "unit": "dona",
-        "qty": 14
+        "category": "Ichimlik"
       }
     ],
-    "totalAmount": 56000,
+    "totalAmount": "56000",
     "paymentMethod": "Naqd",
     "date": "2026-08-25T13:17:02.403Z"
   },
@@ -63,15 +63,15 @@
     "items": [
       {
         "id": "prod_1787655900395",
+        "qty": 13,
         "name": "Suw  bez gaz  1.5 L",
-        "category": "Ichimlik",
+        "unit": "dona",
         "price": 6000,
         "stock": 24,
-        "unit": "dona",
-        "qty": 13
+        "category": "Ichimlik"
       }
     ],
-    "totalAmount": 78000,
+    "totalAmount": "78000",
     "paymentMethod": "Naqd",
     "date": "2026-08-25T13:16:42.650Z"
   },
@@ -82,15 +82,15 @@
     "items": [
       {
         "id": "prod_1787655900395",
+        "qty": 2,
         "name": "Suw  bez gaz  1.5 L",
-        "category": "Ichimlik",
+        "unit": "dona",
         "price": 6000,
         "stock": 26,
-        "unit": "dona",
-        "qty": 2
+        "category": "Ichimlik"
       }
     ],
-    "totalAmount": 12000,
+    "totalAmount": "12000",
     "paymentMethod": "Karta / Click",
     "date": "2026-08-25T12:42:10.241Z"
   },
@@ -101,15 +101,15 @@
     "items": [
       {
         "id": "prod_1787658172860",
+        "qty": 5,
         "name": "Suw bez gaz  1.0 L",
-        "category": "Ichimlik",
+        "unit": "dona",
         "price": 4000,
         "stock": 25,
-        "unit": "dona",
-        "qty": 5
+        "category": "Ichimlik"
       }
     ],
-    "totalAmount": 20000,
+    "totalAmount": "20000",
     "paymentMethod": "Naqd",
     "date": "2026-08-25T11:43:26.950Z"
   },
@@ -120,15 +120,15 @@
     "items": [
       {
         "id": "prod_1787655900395",
+        "qty": 3,
         "name": "Suw  bez gaz  1.5 L",
-        "category": "Ichimlik",
+        "unit": "dona",
         "price": 6000,
         "stock": 29,
-        "unit": "dona",
-        "qty": 3
+        "category": "Ichimlik"
       }
     ],
-    "totalAmount": 18000,
+    "totalAmount": "18000",
     "paymentMethod": "Naqd",
     "date": "2026-08-25T11:43:00.343Z"
   }

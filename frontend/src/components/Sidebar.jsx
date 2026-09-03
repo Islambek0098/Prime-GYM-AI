@@ -9,6 +9,7 @@ import {
   Dumbbell, 
   DollarSign,
   Wallet,
+  Brain,
   X
 } from 'lucide-react';
 
@@ -24,6 +25,7 @@ export default function Sidebar({
 }) {
   const menuItems = [
     { id: 'dashboard', label: 'Bosh Sahifa', icon: LayoutDashboard },
+    { id: 'ai-analytics', label: 'AI Smart Tahlil ⚡', icon: Brain },
     { id: 'members', label: 'Mijozlar Bazasi', icon: Users },
     { id: 'attendance', label: 'Davomat & Shkaflar', icon: CalendarCheck2 },
     { id: 'trainers', label: 'Murabbiylar & PT', icon: Dumbbell },

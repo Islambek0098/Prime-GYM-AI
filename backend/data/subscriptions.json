@@ -1,18 +1,42 @@
 [
   {
-    "id": "sub_1787655824024",
-    "name": "Bir ayliq STANDART",
-    "durationDays": 30,
-    "price": 200000,
-    "visitsCount": 15,
-    "description": ""
+    "id": "sub_1",
+    "name": "Standart (1 Oylik)",
+    "price": 300000,
+    "description": "Haftada 6 kun, soat 08:00 dan 22:00 gacha zalga kirish",
+    "visitsCount": 30,
+    "durationDays": 30
   },
   {
-    "id": "sub_1787657605410",
-    "name": "Bir ayliq + trenrer",
-    "durationDays": 30,
-    "price": 400000,
-    "visitsCount": 15,
-    "description": "Trenrer 50% aladi"
+    "id": "sub_2",
+    "name": "VIP (1 Oylik + Murabbiy)",
+    "price": 500000,
+    "description": "Shaxsiy murabbiy, dush, sauna va cheksiz zal",
+    "visitsCount": 30,
+    "durationDays": 30
+  },
+  {
+    "id": "sub_3",
+    "name": "Talaba / O'quvchi (1 Oylik)",
+    "price": 220000,
+    "description": "Soat 12:00 dan 17:00 gacha talabalar uchun maxsus tarif",
+    "visitsCount": 30,
+    "durationDays": 30
+  },
+  {
+    "id": "sub_4",
+    "name": "Kunlik Kirish (1 Marta)",
+    "price": 30000,
+    "description": "Bir martalik mashg'ulot uchun",
+    "visitsCount": 1,
+    "durationDays": 1
+  },
+  {
+    "id": "sub_5",
+    "name": "Yillik Cheksiz (1 Yil)",
+    "price": 2800000,
+    "description": "1 yil davomida VIP imtiyozlar",
+    "visitsCount": 999,
+    "durationDays": 365
   }
 ]

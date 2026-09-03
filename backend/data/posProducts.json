@@ -1,18 +1,18 @@
 [
   {
-    "id": "prod_1787655900395",
-    "name": "Suw  bez gaz  1.5 L",
-    "category": "Ichimlik",
-    "price": 6000,
-    "stock": 9,
-    "unit": "dona"
-  },
-  {
     "id": "prod_1787658172860",
     "name": "Suw bez gaz  1.0 L",
     "category": "Ichimlik",
-    "price": 4000,
+    "price": "4000",
     "stock": 6,
+    "unit": "dona"
+  },
+  {
+    "id": "prod_1787655900395",
+    "name": "Suw  bez gaz  1.5 L",
+    "category": "Ichimlik",
+    "price": "6000",
+    "stock": 9,
     "unit": "dona"
   }
 ]

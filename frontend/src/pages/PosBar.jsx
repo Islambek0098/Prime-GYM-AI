@@ -60,8 +60,13 @@ export default function PosBar({ posData, members = [], attendance = [], onRefre
     return s.paymentMethod === 'Karta / Click';
   });
 
-  const cashSalesTotal = sales.filter(s => s.paymentMethod === 'Naqd' || !s.paymentMethod).reduce((sum, s) => sum + (s.totalAmount || 0), 0);
-  const cardSalesTotal = sales.filter(s => s.paymentMethod === 'Karta / Click').reduce((sum, s) => sum + (s.totalAmount || 0), 0);
+  const cashSalesTotal = sales
+    .filter(s => s.paymentMethod === 'Naqd' || !s.paymentMethod)
+    .reduce((sum, s) => sum + (Number(s.totalAmount) || 0), 0);
+
+  const cardSalesTotal = sales
+    .filter(s => s.paymentMethod === 'Karta / Click')
+    .reduce((sum, s) => sum + (Number(s.totalAmount) || 0), 0);
 
   const addToCart = (product) => {
     setCart(prev => {

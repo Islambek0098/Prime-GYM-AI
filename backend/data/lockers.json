@@ -32,8 +32,8 @@
     },
     {
       "number": "M-7",
-      "status": "Free",
-      "assignedTo": null
+      "status": "Occupied",
+      "assignedTo": "Xamrabek Isakov"
     },
     {
       "number": "M-8",

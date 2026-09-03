@@ -33,7 +33,7 @@ function writeLocalJson(key, data) {
 
 const initialData = {
   settings: {
-    gymName: "CHAMPION GYM & FITNESS",
+    gymName: "PRIME GYM",
     gymLogo: "",
     currency: "SO'M",
     googleSheetsId: "",

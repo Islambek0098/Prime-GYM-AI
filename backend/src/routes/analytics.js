@@ -41,6 +41,9 @@ router.get('/churn-risk', async (req, res) => {
       actionTip = "Yangi tarif xarid qilishni tavsiya qiling";
     }
 
+    const cleanEndDate = m.endDate ? (typeof m.endDate === 'string' ? m.endDate.split('T')[0] : new Date(m.endDate).toISOString().split('T')[0]) : '';
+    const cleanLastAtt = lastAtt ? (typeof lastAtt === 'string' ? lastAtt.split('T')[0] : new Date(lastAtt).toISOString().split('T')[0]) : 'Kelmagan';
+
     return {
       id: m.id,
       fullName: m.fullName,
@@ -48,8 +51,8 @@ router.get('/churn-risk', async (req, res) => {
       telegramId: m.telegramId || '',
       gender: m.gender,
       remainingVisits: m.remainingVisits,
-      endDate: m.endDate,
-      lastCheckIn: lastAtt ? lastAtt.split('T')[0] : 'Kelmagan',
+      endDate: cleanEndDate,
+      lastCheckIn: cleanLastAtt,
       riskLevel,
       riskReason,
       actionTip

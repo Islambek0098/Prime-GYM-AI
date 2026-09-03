@@ -86,6 +86,26 @@ export default function AIAnalytics({ showToast }) {
     }
   };
 
+  // Date formatter to human-friendly DD.MM.YYYY
+  const formatUzDate = (dateStr) => {
+    if (!dateStr || dateStr === 'Kelmagan') return 'Kelmagan';
+    try {
+      const cleanStr = typeof dateStr === 'string' ? dateStr.split('T')[0] : '';
+      const parts = cleanStr.split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}.${parts[1]}.${parts[0]}`;
+      }
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}.${month}.${year}`;
+    } catch {
+      return dateStr;
+    }
+  };
+
   // Filter churn risk members
   const allRiskMembers = churnData?.riskMembers || [];
   const filteredRiskMembers = allRiskMembers.filter(m => {
@@ -226,19 +246,21 @@ export default function AIAnalytics({ showToast }) {
                       <span className="text-[10px] text-slate-500">{m.gender}</span>
                     </td>
                     <td className="text-slate-300">{m.phone || '-'}</td>
-                    <td>
-                      <span className={`font-semibold ${m.lastCheckIn === 'Kelmagan' ? 'text-rose-400' : 'text-slate-300'}`}>
-                        {m.lastCheckIn}
+                    <td className="whitespace-nowrap">
+                      <span className={`font-semibold ${m.lastCheckIn === 'Kelmagan' ? 'text-rose-400' : 'text-slate-200'}`}>
+                        {formatUzDate(m.lastCheckIn)}
                       </span>
                     </td>
-                    <td className="text-slate-300">{m.endDate || '-'}</td>
-                    <td>
+                    <td className="whitespace-nowrap font-semibold text-slate-200 font-mono">
+                      {formatUzDate(m.endDate)}
+                    </td>
+                    <td className="whitespace-nowrap">
                       <span className={`px-2 py-0.5 rounded font-bold ${m.remainingVisits <= 1 ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-300'}`}>
                         {m.remainingVisits} ta
                       </span>
                     </td>
-                    <td>
-                      <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${m.riskLevel === 'Yuqori'
+                    <td className="whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full font-extrabold text-[11px] whitespace-nowrap shadow-sm ${m.riskLevel === 'Yuqori'
                           ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
                           : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                         }`}>

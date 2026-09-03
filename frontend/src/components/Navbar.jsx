@@ -1,5 +1,5 @@
-import React from 'react';
-import { UserCheck, Plus, Dumbbell, Sun, Moon, Menu, PanelLeftClose, PanelLeftOpen, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { UserCheck, Plus, Dumbbell, Sun, Moon, Menu, PanelLeftClose, PanelLeftOpen, Wifi, WifiOff, RefreshCw, Clock, Calendar } from 'lucide-react';
 
 export default function Navbar({ 
   onOpenCheckIn, 
@@ -14,16 +14,29 @@ export default function Navbar({
   isRetrying = false,
   onRetry
 }) {
-  const currentDate = new Date().toLocaleDateString('uz-UZ', { 
-    weekday: 'short', 
-    month: 'short', 
-    day: 'numeric' 
-  });
+  const [currentDateTime, setCurrentDateTime] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      
+      setCurrentDateTime(`${day}.${month}.${year}. ${hours}:${minutes}`);
+    };
+
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <header className="h-16 sm:h-20 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md px-3 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 min-w-0 transition-colors">
       
-      {/* Left: Menu Toggle Button & Title */}
+      {/* Left: Menu Toggle Button & Greeting */}
       <div className="flex items-center gap-2 sm:gap-4 min-w-0">
         <button
           onClick={onToggleMenu}
@@ -36,12 +49,20 @@ export default function Navbar({
           </span>
         </button>
 
-        <div className="min-w-0 hidden sm:block">
-          <h2 className="text-sm sm:text-lg font-bold text-white flex items-center gap-1.5 truncate">
-            <span>Hush kelibsiz!</span> 👋
+        <div className="min-w-0">
+          <h2 className="text-sm sm:text-lg font-extrabold text-white flex items-center gap-1.5 truncate">
+            <span>Xush kelibsiz!</span> 👋
           </h2>
-          <p className="text-[10px] sm:text-xs text-slate-400 capitalize truncate">{currentDate}</p>
         </div>
+      </div>
+
+      {/* Center: Live Date & Time Display (Hidden on mobile/tablet to avoid clutter) */}
+      <div className="hidden md:flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-slate-950/80 border border-slate-800/90 shadow-inner">
+        <Calendar className="w-4 h-4 text-cyan-400 shrink-0" />
+        <span className="text-sm sm:text-base font-black text-cyan-300 tracking-wider font-mono">
+          {currentDateTime || '03.09.2026. 12:24'}
+        </span>
+        <Clock className="w-4 h-4 text-indigo-400 shrink-0 animate-pulse" />
       </div>
 
       {/* Right: Action Buttons, Theme Switcher & Status */}
@@ -139,4 +160,3 @@ export default function Navbar({
     </header>
   );
 }
-

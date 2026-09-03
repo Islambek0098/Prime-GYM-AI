@@ -82,7 +82,7 @@ export default function Sidebar({
               {(!isCollapsed || isMobileOpen) && (
                 <div className="min-w-0">
                   <h1 className="font-extrabold text-sm tracking-wide text-white leading-tight truncate">
-                    {gymName || 'CHAMPION GYM'}
+                    {gymName || 'PRIME GYM'}
                   </h1>
                   <p className="text-[11px] text-cyan-400 font-semibold tracking-wider uppercase">
                     Admin Panel
